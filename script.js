@@ -42,34 +42,54 @@ const init = () => {
     renderBoard()
 }
 
-const renderBoard = () => {
-    for (let i=0; i<gridSize; i++) {
-        for (let j=0; j<gridSize; j++) {
-            topGridArray.push(new Cell(i, j))
-            bottomGridArray.push(new Cell(i, j))
+const renderBoard = () => {                                     //generates board with x and y axis 1 through 10
+    for (let i=1; i<=gridSize; i++) {
+        for (let j=1; j<=gridSize; j++) {
+            topGridArray.push(new topGridCell(i, j))
+            bottomGridArray.push(new bottomGridCell(i, j))
         }
     }
 }
 
+const updateBoard = (?) => {                                    // updates board after each turn
+                                                                
+}
 
-// cell object constructor
- function Cell(row, col) {
-    this.row = 0
-    this.col = 0
+
+// top grid cell object constructor
+ function topGridCell(row, col) {
+    this.row = row
+    this.col = col
     this.selected = false
     this.occupied = false
     this.hit = false
     this.ship = null
+    this.addEventListener('click', handleClick)
+}
+
+// bottom grid cell object constructor
+function bottomGridCell(row,col) {
+    this.row = row
+    this.col = col
+    this.selected = false
+    this.occupied = false
+    this.hit = false
+    this.ship = null
+    // what properties do the bottom grid cells need?
+    // what does an event listener need to do?
 }
 
 
 
 const selectShip = () => {}
 
-const updateMessage = (?) =>
+const updateMessage = (?) => {}
 
-const changeTurn = (turn) =>
+const changeTurn = (turn) => {}
+ 
 
+// what needs to change on the top board?
+// what need to change on the bottom board?
 const handleClick = (event) => {                                // player picks a square
     if (event.target.selected === true) {                       // square is already picked
         updateMessage(?) 'pick another square'                  // tell player to pick again
@@ -77,39 +97,20 @@ const handleClick = (event) => {                                // player picks 
         event.target.selected = true                            // mark square as selected
         if (event.target.occupied === false) {                  // square does not have a ship
             updateMessage(?) 'miss'                             // tell player it was a miss
-            event.target.hit =false                             // mark square as miss                           
+            event.target.hit = false  
+            //change board to display miss                           // mark square as miss                           
         } else {                                                // square has a ship
             event.target.hit = true                             // mark square as hit
+            //change board to display miss
             run hitShip
            
             
             
         } 
         turn = ('player') ? turn = 'computer' : turn = 'player' // changes turn
-        
-                                                            
-    }                                       
+                                           
+    }                                        
     
-
-
-
-
-    
-    (event.target.occupied === false) {
-
-    }
-    
-    
-    if (cell is occupied) {
-        //change board status
-        change hit to true 
-        //change ship status 
-        find what ship is there
-        add to hit counter
-
-    } else {
-
-    }
 }
 
 const hitShip = (ship) => {
@@ -151,11 +152,18 @@ submarineEl.addEventListener('click', selectShip)
 patrolBoatEl.addEventListener('click', selectShip)
 
 
+
+
+
+
 /*--------------------------- This runs the game ----------------------------*/
 
 init()
-console.log(topGridArray)
-console.log(bottomGridArray)
+console.log(bottomGridArray[0])
+
+// bottomGridArray.forEach((cell) => {
+//     console.log(`${cell.row}, ${cell.col}`)
+// })
 
 
 
@@ -210,6 +218,8 @@ If hit
                 If false
 
                     Computer wins
+
+
 
 Repeat for computer's turn
 
