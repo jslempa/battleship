@@ -1,5 +1,7 @@
 /*-------------------------------- Constants --------------------------------*/
 
+const gridSize = 10 //change this to a let if I want to try to let player change grid size
+
 // const carrier
 // const battleship
 // const destroyer
@@ -12,10 +14,13 @@
 
 let selectedShip = null
 
-let turn = player
+// might not need these up here (have them in init)
+let turn = 'player'
 let winner = false
 let playerShipCount = 5
 let cpuShipCount = 5
+const topGridArray = []
+const bottomGridArray = []
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -27,23 +32,64 @@ const patrolBoatEl = document.querySelector('#patrol-boat')
 
 /*-------------------------------- Functions --------------------------------*/
 
+const init = () => {
+    let turn = 'player'
+    let winner = false
+    let playerShipCount = 5
+    let cpuShipCount = 5
+    const topGridArray = []
+    const bottomGridArray = []
+    renderBoard()
+}
+
+const renderBoard = () => {
+    for (let i=0; i<gridSize; i++) {
+        for (let j=0; j<gridSize; j++) {
+            topGridArray.push(new Cell(i, j))
+            bottomGridArray.push(new Cell(i, j))
+        }
+    }
+}
+
+
+// cell object constructor
+ function Cell(row, col) {
+    this.row = 0
+    this.col = 0
+    this.selected = false
+    this.occupied = false
+    this.hit = false
+    this.ship = null
+}
+
+
+
 const selectShip = () => {}
 
 const updateMessage = (?) =>
 
-const handleClick = (event) => {                    // player picks a square
-    if (event.target.selected === true) {           // square is already picked
-        display pick another square                     // tell player to pick again
-    } else {                                        // square is not already picked
-        event.target.selected = true                    // mark square as selected
-        if (event.target.occupied === false) {      // square is not occupied
+const changeTurn = (turn) =>
 
-        }                                           // square is occupied
+const handleClick = (event) => {                                // player picks a square
+    if (event.target.selected === true) {                       // square is already picked
+        updateMessage(?) 'pick another square'                  // tell player to pick again
+    } else {                                                    // square is not already picked
+        event.target.selected = true                            // mark square as selected
+        if (event.target.occupied === false) {                  // square does not have a ship
+            updateMessage(?) 'miss'                             // tell player it was a miss
+            event.target.hit =false                             // mark square as miss                           
+        } else {                                                // square has a ship
+            event.target.hit = true                             // mark square as hit
+            run hitShip
+           
+            
+            
+        } 
+        turn = ('player') ? turn = 'computer' : turn = 'player' // changes turn
+        
+                                                            
     }                                       
     
-
-
-
 
 
 
@@ -77,7 +123,7 @@ const hitShip = (ship) => {
 
 }
 
-const checkIfSunk = (?) => { // might not need this if I have hitShip
+const checkIfSunk = (?) => {} // might not need this if I have hitShip
 
 const checkForWinner = () => {
     if (playerShipCount === 0) {
@@ -93,7 +139,7 @@ const checkForWinner = () => {
 
 }    
 
-}
+
 
 /*----------------------------- Event Listeners -----------------------------*/
 
@@ -105,13 +151,25 @@ submarineEl.addEventListener('click', selectShip)
 patrolBoatEl.addEventListener('click', selectShip)
 
 
+/*--------------------------- This runs the game ----------------------------*/
+
+init()
+console.log(topGridArray)
+console.log(bottomGridArray)
+
+
+
+
+
+
+
 
 /* 
 
 ship properties
 
-name
-location: []
+? name
+? location: [] 
 hitCounter: starts at 0
 health
 
@@ -119,6 +177,7 @@ cell properties
 selected: boolean
 occupied: boolean
 hit: boolean
+ship: string ex: 'destroyer'
 
 
 
