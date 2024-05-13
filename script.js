@@ -12,6 +12,8 @@ const gridSize = 10 //change this to a let if I want to try to let player change
 
 /*---------------------------- Variables (state) ----------------------------*/
 
+let numShipsPlaced = 0 //when this becomes 5 exit setup stage and begin game
+
 let selectedShip = null
 
 // might not need these up here (have them in init)
@@ -38,6 +40,7 @@ const patrolBoatEl = document.querySelector('#patrol-boat')
 
 /*-------------------------------- Functions --------------------------------*/
 
+// starts game
 const init = () => {
     let turn = 'player'
     let winner = false
@@ -85,9 +88,10 @@ const renderBoard = () => {
     divEl.dataset.row = row
     divEl.dataset.col = col
     element.appendChild(divEl)
-    divEl.addEventListener('click', testHandleClick)
+    //divEl.addEventListener('click', testHandleClick)
     divEl.addEventListener('mouseover', changeBorderToWhite)
-    divEl.addEventListener('mouseout', changeBorderToGray)                 
+    divEl.addEventListener('mouseout', changeBorderToGray)   
+    divEl.addEventListener('click', handleTopGridClick)              
 }
 
 const testHandleClick = (event) => {
@@ -101,6 +105,54 @@ const changeBorderToWhite = (event) => {
 const changeBorderToGray = (event) => {
     event.target.style.borderColor = 'lightslategray'
 }
+
+// determines hit or miss when picking a square during your turn
+const handleTopGridClick = (event) => {
+    
+    //console.log(event.target)
+    getGridCell(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
+    //console.log(targetCell.gridCell.hit)
+
+
+}    
+//     let row = event.target.dataset.row
+//     let col = event.target.dataset.col
+//     let cellObj = null
+//     playerTopGridArray.forEach((cell) => {
+//         if (cell.row === row && cell.col === col) {
+//             cellObj = cell
+//         } 
+//     })
+    
+//     let targetCell = 
+// }
+
+
+// returns gridCell that corresponds to clicked div
+const getGridCell = (row, col, array) => {
+    array.forEach((gridCell) => {
+        if (gridCell.row == row && gridCell.col == col) {
+            console.log(gridCell)
+            return gridCell
+        } else {
+            return
+        }
+    })
+}
+
+
+// player place ships
+// const setup = () => {
+
+// }
+
+//player's first turn
+// const run = () => {
+
+// }
+
+
+
 
 // // commented out bc I don't think I need a cell constructor for each board
 // function bottomGridCell(row,col) {
@@ -193,8 +245,10 @@ const changeBorderToGray = (event) => {
 
 /*--------------------------- This runs the game ----------------------------*/
 
-init()
-console.log(playerBottomGridArray[0])
+init() // starts game
+console.log(playerBottomGridArray[99])
+// setup() // player places ships
+// run() // starts the part where player and cpu select squares
 
 // playerTopGridArray.forEach((cell) => {
 //     console.log(`${cell.row}, ${cell.col}`)
@@ -286,22 +340,27 @@ If hit
 Repeat for computer's turn
 
 
-one board constructor
-boards are objects
-    player or cpu
-    top or bottom
-    grid array
-    
-one cell constructor
+
+PICKING A SQUARE PROCESS 
+
+add different event listeners to top vs bottom player grids?
+
+DONE Mouseover event (white border)
+
+A square (div el) is clicked (handleClick)
+    Get gridCell object with same row and col as clicked div (function that returns the gridCell object)
+
+   
+    Determine what to do with this gridCell (something function)
+
+
+
+
 
 
 
 
 TO DO
-
-Create 4 boards?
-
-For player boards, does the div attached to each cell need a unique id if each cell already has a unique id?
 
 How to place ships on board
 
