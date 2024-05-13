@@ -194,6 +194,18 @@ console.log(playerBottomGridArray[0])
 
 /*
 
+
+const handleClick = (event) => {
+    findCell
+    - match event target row and col to corresponding gridCell
+    updateCell
+    - change cell properties with if else
+    - change event target (div) color
+   
+    
+}
+
+
 player clicks on div 
 each div needs an event listener
     - on click -> find matching cell
