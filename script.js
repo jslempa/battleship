@@ -85,11 +85,21 @@ const renderBoard = () => {
     divEl.dataset.row = row
     divEl.dataset.col = col
     element.appendChild(divEl)
-    divEl.addEventListener('click', testHandleClick)                 
+    divEl.addEventListener('click', testHandleClick)
+    divEl.addEventListener('mouseover', changeBorderToWhite)
+    divEl.addEventListener('mouseout', changeBorderToGray)                 
 }
 
 const testHandleClick = (event) => {
     console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
+}
+
+const changeBorderToWhite = (event) => {
+    event.target.style.borderColor = 'white'
+}
+
+const changeBorderToGray = (event) => {
+    event.target.style.borderColor = 'lightslategray'
 }
 
 // // commented out bc I don't think I need a cell constructor for each board
