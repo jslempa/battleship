@@ -19,11 +19,15 @@ let turn = 'player'
 let winner = false
 let playerShipCount = 5
 let cpuShipCount = 5
-const topGridArray = []
-const bottomGridArray = []
+const playerTopGridArray = []
+const playerBottomGridArray = []
+const cpuTopGridArray = []
+const cpuBottomGridArray = []
 
 /*------------------------ Cached Element References ------------------------*/
 
+const topGridEl = document.querySelector('#top-grid')
+const bottomGridEl = document.querySelector('#bottom-grid')
 const carrierEl = document.querySelector('#carrier')
 const battleshipEl = document.querySelector('#battleship')
 const destroyerEl = document.querySelector('#destroyer')
@@ -36,24 +40,36 @@ const init = () => {
     let turn = 'player'
     let winner = false
     let playerShipCount = 5
-    let cpuShipCount = 5
-    const topGridArray = []
-    const bottomGridArray = []
+    let computerShipCount = 5
+    const playerTopGridArray = []
+    const playerBottomGridArray = []
+    const cpuTopGridArray = []
+    const cpuBottomGridArray = []
     renderBoard()
 }
 
 const renderBoard = () => {                                     //generates board with x and y axis 1 through 10
-    for (let i=1; i<=gridSize; i++) {
+    for (let i=1; i<=gridSize; i++) {                           
         for (let j=1; j<=gridSize; j++) {
-            topGridArray.push(new topGridCell(i, j))
-            bottomGridArray.push(new bottomGridCell(i, j))
+            playerTopGridArray.push(new topGridCell(i, j))
+            const div = document.createElement('div')           //create divs in constructor instead?
+            topGridEl.appendChild(div)
+            
+            
         }
     }
-}
+    for (let i=1; i<=gridSize; i++) {                           
+        for (let j=1; j<=gridSize; j++) {
+            playerBottomGridArray.push(new bottomGridCell(i, j))
+            const div = document.createElement('div')
+            bottomGridEl.appendChild(div)
+        }
+    }
+}    
 
-const updateBoard = (?) => {                                    // updates board after each turn
+const updateBoard = (?) => {}                                    // updates board after each turn
                                                                 
-}
+
 
 
 // top grid cell object constructor
@@ -64,7 +80,10 @@ const updateBoard = (?) => {                                    // updates board
     this.occupied = false
     this.hit = false
     this.ship = null
-    this.addEventListener('click', handleClick)
+    document.createElement
+
+
+    this.addEventListener('click', handleClick)                 // this needs to be added to an html element (div)
 }
 
 // bottom grid cell object constructor
@@ -76,7 +95,6 @@ function bottomGridCell(row,col) {
     this.hit = false
     this.ship = null
     // what properties do the bottom grid cells need?
-    // what does an event listener need to do?
 }
 
 
@@ -167,12 +185,15 @@ console.log(bottomGridArray[0])
 
 
 
+/*
+
+player clicks on div                    //how do I match the div that got clicked on to the corresponding array value?
+- if already selected
+    - return
+- if not selected
 
 
 
-
-
-/* 
 
 ship properties
 
@@ -224,18 +245,14 @@ If hit
 Repeat for computer's turn
 
 
-2 options
+TO DO
 
-1. Each grid cell is an object and a div element
+Create 4 boards?
 
-Row: string?
-Column: number
-Occupied: boolean
-Hit: boolean
+For player boards, does the div attached to each cell need a unique id if each cell already has a unique id?
 
-2. Each grid cell is a div element not an object
+How to place ships on board
 
-
+Computer logic
 
 */
-
