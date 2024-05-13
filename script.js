@@ -81,10 +81,15 @@ const renderBoard = () => {
     this.hit = false
     this.ship = null
     const divEl = document.createElement('div')
+    divEl.classList.add('clickable-square')
     divEl.dataset.row = row
     divEl.dataset.col = col
     element.appendChild(divEl)
-    //divEl.addEventListener('click', handleClick)                 
+    divEl.addEventListener('click', testHandleClick)                 
+}
+
+const testHandleClick = (event) => {
+    console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
 }
 
 // // commented out bc I don't think I need a cell constructor for each board
