@@ -132,12 +132,6 @@ const renderBoard = () => {
 
 // Functions for dealing with grid coordinates
 
-const logCellObj = () => {
-    console.log()
-}
-
-
-
 //don't need this anymore -> just use cell.xy
 //returns coords of cell as ARRAY
 // const getCellXY = (cell) => {
@@ -167,28 +161,32 @@ const getCell = (divEl) => {
 
 
 // THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
-//input div, output cell obj
+// input div, output cell obj
 const divToCell = (event) => {
     let board = event.target.dataset.board
     let row = parseInt(event.target.dataset.row)
     let col = parseInt(event.target.dataset.col)
+    let matchingCell = {}
     arrayOfArrays.forEach((array) => {
         for (let i=0; i<array.length; i++) {
             if (array[i].board === board && array[i].row === row && array[i].col === col) {
-                console.log(array[i])
-                return array[i]
+                matchingCell = array[i]
             }
         }
     })
+    //console.log(typeof matchingCell)
+    //making sure it returns an object
 }
 
-    //how do I tell it which array to loop through to find the matching cell object?
-
-
-
-
-
-
+// THIS LINKS A CELL OBJ TO THE DIV THAT REPRESENTS IT
+// input cell obj, output div
+const celltoDiv = (cell) => {
+    // let board = cell.board
+    // let row = cell.row
+    // let col = cell.col
+    let matchingDiv = document.querySelector(`[data-board='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
+    return matchingDiv
+}
 
 // other functions
 
@@ -215,14 +213,8 @@ const changeTwoCellsToGreen = (event) => {
     
 }
 
-
-
-
-
-
-
 const changeBorderBack = (event) => {
-    event.target.style.borderColor = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray).color
+    event.target.style.borderColor = divToCell().color
 }
 
 //shows ship outline -> if valid outline is green if invalid outline is red
@@ -232,22 +224,14 @@ const showOutline = (event) => {
 
 // determines hit or miss when picking a square during your turn
 const handleTopGridClick = (event) => {
-    let targetCell = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
+    //let targetCell = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
+    let targetCell = divToCell(event)
     handleCell(targetCell)
     event.target.style.backgroundColor = targetCell.color
     console.log(targetCell)
 
     //handleDiv(targetCell)
 }   
-
-// returns gridCell object that corresponds to clicked div
-const getCellObj = (row, col, array) => {
-    for (let i=0; i<array.length; i++) {
-        if (array[i].row == row && array[i].col == col) {
-            return array[i]
-        } 
-    }
-}
 
 // updates cell obj properties
 const handleCell = (cell) => {
@@ -285,13 +269,11 @@ const hitShip = (ship) => {
 
 }
 
-
 // gets player and cpu ships on game board
 // const setup = () => {
 //     playerPlaceShips()
 //     cpuPlaceShips()
 // }
-
 
 // loops through player ships array
 const playerPlaceShips = () => {
@@ -326,18 +308,11 @@ const playerPlaceShips = () => {
 
 // }
 
-
-
-
-
-
-
 // const selectShip = () => {}
 
 // const updateMessage = (?) => {}
 
-// const changeTurn = (turn) => {}
- 
+// const changeTurn = (turn) => {} 
 
 // // what needs to change on the top board?
 // // what need to change on the bottom board?
@@ -402,7 +377,10 @@ const playerPlaceShips = () => {
 /*--------------------------- This runs the game ----------------------------*/
 
 init() // starts game
-console.log(cpuBottomGridArray[99])
+console.log(celltoDiv(playerTopGridArray[0]))
+
+
+//console.log(cpuBottomGridArray[99])
 //setup()
 
 // setup() // player places ships
