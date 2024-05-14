@@ -22,6 +22,10 @@ const cpuShips = [
 
 let setup = true
 //when this becomes 5 make setup = false and begin game
+
+//stores coordinates for current cell
+let currentCell= []
+
 let numShipsPlaced = 0 
 
 let selectedShip = null
@@ -45,11 +49,12 @@ const playerBottomGridEl = document.querySelector('#player-bottom-grid')
 const cpuTopGridEl = document.querySelector('#cpu-top-grid')
 const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
-const carrierEl = document.querySelector('#carrier')
-const battleshipEl = document.querySelector('#battleship')
-const destroyerEl = document.querySelector('#destroyer')
-const submarineEl = document.querySelector('#submarine')
-const patrolBoatEl = document.querySelector('#patrol-boat')
+// for if I want ships that you can click on
+// const carrierEl = document.querySelector('#carrier')
+// const battleshipEl = document.querySelector('#battleship')
+// const destroyerEl = document.querySelector('#destroyer')
+// const submarineEl = document.querySelector('#submarine')
+// const patrolBoatEl = document.querySelector('#patrol-boat')
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -66,8 +71,6 @@ const init = () => {
     renderBoard()
 }
 
-
-
 //generates 4 boards with x and y axis 1 through 10          
 //create 4 boards- display all for testing- remove divs from cpu boards for final product
 const renderBoard = () => {                                    
@@ -79,14 +82,16 @@ const renderBoard = () => {
             cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
         }
     }
-}    
+} 
 
 //const updateBoard = (?) => {} // updates board after each turn                                                      
 
-// top grid cell object constructor
+// grid cell object constructor
  function Cell(row, col, element) {
     this.row = row
     this.col = col
+    this.xy = [row,col]
+    this.board = element.id
     this.selected = false
     this.occupied = false
     this.hit = false
@@ -94,6 +99,7 @@ const renderBoard = () => {
     this.color = null
     const divEl = document.createElement('div')
     divEl.classList.add('clickable-square')
+    divEl.dataset.board = element.id
     divEl.dataset.row = row
     divEl.dataset.col = col
     switch(element) {
@@ -103,7 +109,14 @@ const renderBoard = () => {
             divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
-            //add bottom grid event listeners
+            //mouseover
+            // divEl.addEventListener('mouseover', changeTwoCellsToGreen);
+            // divEl.addEventListener('mouseout', changeBorderBack);
+            divEl.addEventListener('click', divToCell)
+            //divEl.addEventListener('click', getDiv);
+            //divEl.addEventListener('mouseover', showOutline())
+            //click
+            //doubleclick
             break;
         default:
             break;   
@@ -113,25 +126,54 @@ const renderBoard = () => {
 
 // Functions for dealing with grid coordinates
 
-const getCellCoordinates = (cell) => {
-    let coordinates = [cell.row, cell.col]
-    return coordinates
+const logCellObj = () => {
+    console.log()
 }
 
-const getDivCoordinates = (divEl) => {
+
+
+//don't need this anymore -> just use cell.xy
+//returns coords of cell as ARRAY
+// const getCellXY = (cell) => {
+//     let coordinates = [cell.row, cell.col]
+//     return coordinates
+// }
+
+// returns coords of div as ARRAY
+const getDivXY = (divEl) => {
     let coordinates = [parseInt(divEl.dataset.row), parseInt(divEl.dataset.col)]
     return coordinates
 }
 
-// returns div element
-const findDiv = (cell) => {
-
+// input cell object -> return div element
+const getDiv = (cell) => {
+    console.log(cell)
+    //let matchingDiv = document.querySelector(`[id='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
+    //matchingDiv.style.borderColor = 'lime'
+    //return matchingDiv
 }
 
-// returns cell object
-const findCell = (divEl) => {
-
+// input div -> return cell object
+const getCell = (divEl) => {
+    let coords = getDivXY(divEl)
 }
+
+
+
+
+//input div, output cell obj
+const divToCell = (event) => {
+    let board = event.target.dataset.board
+    let row = parseInt(event.target.dataset.row)
+    let col = parseInt(event.target.dataset.col)
+    //console.log(board)
+
+    //how do I tell it which array to loop through to find the matching cell object?
+}    
+
+
+
+
 
 
 // other functions
@@ -144,8 +186,34 @@ const changeBorderToGreen = (event) => {
     event.target.style.borderColor = 'lime'
 }
 
+//trying to get mouseover cell and adjacent cell to turn green
+const changeTwoCellsToGreen = (event) => {
+    //changes mouseover cell to green
+    event.target.style.borderColor = 'lime'
+    //coords is an array [row,col]
+    let coords = getDivXY(event.target)
+    let nextCellCoords = [coords[0], coords[1]+1]
+    //need to go from coords to div and change that div
+    let nextCellEl = getDiv(nextCellCoords)
+    nextCellEl.style.borderColor = 'lime'
+
+    console.log(nextCellCoords)
+    
+}
+
+
+
+
+
+
+
 const changeBorderBack = (event) => {
     event.target.style.borderColor = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray).color
+}
+
+//shows ship outline -> if valid outline is green if invalid outline is red
+const showOutline = (event) => {
+
 }
 
 // determines hit or miss when picking a square during your turn
@@ -153,11 +221,10 @@ const handleTopGridClick = (event) => {
     let targetCell = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
     handleCell(targetCell)
     event.target.style.backgroundColor = targetCell.color
+    console.log(targetCell)
 
     //handleDiv(targetCell)
 }   
-
-
 
 // returns gridCell object that corresponds to clicked div
 const getCellObj = (row, col, array) => {
@@ -237,9 +304,8 @@ const playerPlaceShips = () => {
 // double click -> rotate -> orientation variable: horizontal or vertical (toggle)
 
 
-// position checker
-
-
+// position checker returns boolean
+//const checkPosition = ()
 
 //player's first turn
 // const run = () => {
@@ -249,16 +315,6 @@ const playerPlaceShips = () => {
 
 
 
-// // commented out bc I don't think I need a cell constructor for each board
-// function bottomGridCell(row,col) {
-//     this.row = row
-//     this.col = col
-//     this.selected = false
-//     this.occupied = false
-//     this.hit = false
-//     this.ship = null
-//     // what properties do the bottom grid cells need?
-// }
 
 
 
@@ -332,7 +388,7 @@ const playerPlaceShips = () => {
 /*--------------------------- This runs the game ----------------------------*/
 
 init() // starts game
-console.log(playerBottomGridArray[99])
+console.log(cpuBottomGridArray[99])
 //setup()
 
 // setup() // player places ships
@@ -441,19 +497,5 @@ DONE Get Cell object with same row and col as clicked div (function returns the 
    
     Determine what to do with this Cell (something function)
 
-
-
-
-
-
-
-
-
-
-TO DO
-
-How to place ships on board
-
-Computer logic
 
 */
