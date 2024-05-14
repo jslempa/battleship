@@ -39,6 +39,7 @@ const playerTopGridArray = []
 const playerBottomGridArray = []
 const cpuTopGridArray = []
 const cpuBottomGridArray = []
+const arrayOfArrays = []
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -68,6 +69,7 @@ const init = () => {
     const playerBottomGridArray = []
     const cpuTopGridArray = []
     const cpuBottomGridArray = []
+    const arrayOfArrays = []
     renderBoard()
 }
 
@@ -82,6 +84,10 @@ const renderBoard = () => {
             cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
         }
     }
+    arrayOfArrays.push(playerTopGridArray)
+    arrayOfArrays.push(playerBottomGridArray)
+    arrayOfArrays.push(cpuTopGridArray)
+    arrayOfArrays.push(cpuBottomGridArray)
 } 
 
 //const updateBoard = (?) => {} // updates board after each turn                                                      
@@ -160,16 +166,24 @@ const getCell = (divEl) => {
 
 
 
-
+// THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
 //input div, output cell obj
 const divToCell = (event) => {
     let board = event.target.dataset.board
     let row = parseInt(event.target.dataset.row)
     let col = parseInt(event.target.dataset.col)
-    //console.log(board)
+    arrayOfArrays.forEach((array) => {
+        for (let i=0; i<array.length; i++) {
+            if (array[i].board === board && array[i].row === row && array[i].col === col) {
+                console.log(array[i])
+                return array[i]
+            }
+        }
+    })
+}
 
     //how do I tell it which array to loop through to find the matching cell object?
-}    
+
 
 
 
