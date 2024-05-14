@@ -2,13 +2,18 @@
 
 const gridSize = 10 //change this to a let if I want to try to let player change grid size
 
-// const carrier
-// const battleship
-// const destroyer
-// const submarine
-// const patrolBoat
+const playerCarrier = {length: 5, hitCounter: 0, coordinates: []}
+const playerBattleship = {length: 4, hitCounter: 0, coordinates: []}
+const playerDestroyer = {length: 3, hitCounter: 0, coordinates: []}
+const playerSubmarine = {length: 3, hitCounter: 0, coordinates: []}
+const playerPatrolBoat = {length: 2, hitCounter: 0, coordinates: []}
 
-// do I need separate ones for player and computer?
+const cpuCarrier = {length: 5, hitCounter: 0, coordinates: []}
+const cpuBattleship = {length: 4, hitCounter: 0, coordinates: []}
+const cpuDestroyer = {length: 3, hitCounter: 0, coordinates: []}
+const cpuSubmarine = {length: 3, hitCounter: 0, coordinates: []}
+const cpuPatrolBoat = {length: 2, hitCounter: 0, coordinates: []}
+
 
 /*---------------------------- Variables (state) ----------------------------*/
 
@@ -28,6 +33,7 @@ const cpuBottomGridArray = []
 
 /*------------------------ Cached Element References ------------------------*/
 
+const messageEl = document.querySelector('.message')
 const playerTopGridEl = document.querySelector('#player-top-grid')
 const playerBottomGridEl = document.querySelector('#player-bottom-grid')
 const cpuTopGridEl = document.querySelector('#cpu-top-grid')
@@ -60,10 +66,10 @@ const init = () => {
 const renderBoard = () => {                                    
     for (let i=1; i<=gridSize; i++) {                           
         for (let j=1; j<=gridSize; j++) {
-            playerTopGridArray.push(new gridCell(i,j, playerTopGridEl))
-            playerBottomGridArray.push(new gridCell(i,j,playerBottomGridEl))
-            cpuTopGridArray.push(new gridCell(i,j,cpuTopGridEl))
-            cpuBottomGridArray.push(new gridCell(i,j,cpuBottomGridEl))
+            playerTopGridArray.push(new Cell(i,j,playerTopGridEl))
+            playerBottomGridArray.push(new Cell(i,j,playerBottomGridEl))
+            cpuTopGridArray.push(new Cell(i,j,cpuTopGridEl))
+            cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
             // const div = document.createElement('div')               //create divs in constructor instead?
             // topGridEl.appendChild(div)
         }
@@ -76,21 +82,22 @@ const renderBoard = () => {
 
 
 // top grid cell object constructor
- function gridCell(row, col, element) {
+ function Cell(row, col, element) {
     this.row = row
     this.col = col
     this.selected = false
     this.occupied = false
     this.hit = false
     this.ship = null
+    this.color = null
     const divEl = document.createElement('div')
     divEl.classList.add('clickable-square')
     divEl.dataset.row = row
     divEl.dataset.col = col
     element.appendChild(divEl)
     //divEl.addEventListener('click', testHandleClick)
-    divEl.addEventListener('mouseover', changeBorderToWhite)
-    divEl.addEventListener('mouseout', changeBorderToGray)   
+    divEl.addEventListener('mouseover', changeBorderToGreen)
+    divEl.addEventListener('mouseout', changeBorderBack)   
     divEl.addEventListener('click', handleTopGridClick)              
 }
 
@@ -98,46 +105,68 @@ const testHandleClick = (event) => {
     console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
 }
 
-const changeBorderToWhite = (event) => {
-    event.target.style.borderColor = 'white'
+const changeBorderToGreen = (event) => {
+    event.target.style.borderColor = 'lime'
 }
 
-const changeBorderToGray = (event) => {
-    event.target.style.borderColor = 'lightslategray'
+const changeBorderBack = (event) => {
+    event.target.style.borderColor = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray).color
 }
 
 // determines hit or miss when picking a square during your turn
 const handleTopGridClick = (event) => {
-    
-    //console.log(event.target)
-    getGridCell(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
-    //console.log(targetCell.gridCell.hit)
+    let targetCell = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
+    handleCell(targetCell)
+    event.target.style.backgroundColor = targetCell.color
+
+    //handleDiv(targetCell)
+}   
 
 
-}    
-//     let row = event.target.dataset.row
-//     let col = event.target.dataset.col
-//     let cellObj = null
-//     playerTopGridArray.forEach((cell) => {
-//         if (cell.row === row && cell.col === col) {
-//             cellObj = cell
-//         } 
-//     })
-    
-//     let targetCell = 
-// }
 
+// returns gridCell object that corresponds to clicked div
+const getCellObj = (row, col, array) => {
+    for (let i=0; i<array.length; i++) {
+        if (array[i].row == row && array[i].col == col) {
+            return array[i]
+        } 
+    }
+}
 
-// returns gridCell that corresponds to clicked div
-const getGridCell = (row, col, array) => {
-    array.forEach((gridCell) => {
-        if (gridCell.row == row && gridCell.col == col) {
-            console.log(gridCell)
-            return gridCell
-        } else {
-            return
-        }
-    })
+// updates cell obj properties
+const handleCell = (cell) => {
+    if (cell.selected === true) {                               // square is already picked 
+        messageEl.innerHTML = 'Pick another square'
+        console.log('pick another square')                      // tell player to pick again
+    } else {                                                    // square is not already picked
+        cell.selected = true
+        cell.color = 'white'                                    // mark square as selected
+        if (cell.occupied === false) {                          // square does not have a ship
+            messageEl.innerHTML = 'Miss!'
+            console.log('miss')                                 // tell player it was a miss
+            cell.hit = false                                    // mark square as miss                           
+        } else {                                                // square has a ship
+            cell.hit = true
+            cell.color = 'red'
+            hitShip(cell.ship)                                     // mark square as hit
+        }                                                  //change board to display miss
+    }
+}
+
+// prob don't need this (change color in handleCell and handleTopGridClick)
+// updates div color
+// const handleDiv = (cell) => {}
+
+//marks ship as hit
+const hitShip = (ship) => {
+    ship.hitCounter++
+    if (ship.hitCounter === ship.health && turn === 'player') {
+        playerShipCount--
+        checkForWinner()    
+    } else {
+        return
+    }
+
 }
 
 
@@ -200,16 +229,7 @@ const getGridCell = (row, col, array) => {
     
 // }
 
-// const hitShip = (ship) => {
-//     ship.hitCounter++
-//     if (ship.hitCounter === ship.health && turn === 'player') {
-//         playerShipCount--
-//         checkForWinner()    
-//     } else {
-//         return
-//     }
 
-// }
 
 // const checkIfSunk = (?) => {} // might not need this if I have hitShip
 
@@ -341,17 +361,19 @@ Repeat for computer's turn
 
 
 
-PICKING A SQUARE PROCESS 
+PLAYER PICKING A TOP SQUARE PROCESS 
 
 add different event listeners to top vs bottom player grids?
 
 DONE Mouseover event (white border)
 
-A square (div el) is clicked (handleClick)
-    Get gridCell object with same row and col as clicked div (function that returns the gridCell object)
+DONE A square (div el) is clicked (handleClick)
+DONE Get Cell object with same row and col as clicked div (function returns the Cell object)
 
    
-    Determine what to do with this gridCell (something function)
+    Determine what to do with this Cell (something function)
+
+
 
 
 
