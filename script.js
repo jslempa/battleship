@@ -2,22 +2,27 @@
 
 const gridSize = 10 //change this to a let if I want to try to let player change grid size
 
-const playerCarrier = {length: 5, hitCounter: 0, coordinates: []}
-const playerBattleship = {length: 4, hitCounter: 0, coordinates: []}
-const playerDestroyer = {length: 3, hitCounter: 0, coordinates: []}
-const playerSubmarine = {length: 3, hitCounter: 0, coordinates: []}
-const playerPatrolBoat = {length: 2, hitCounter: 0, coordinates: []}
+const playerShips = [
+    {name: 'patrolBoat', size: 2, hitCounter: 0, coordinates: []},
+    {name: 'submarine', size: 3, hitCounter: 0, coordinates: []},
+    {name: 'destroyer', size: 3, hitCounter: 0, coordinates: []},
+    {name: 'battleship', size: 4, hitCounter: 0, coordinates: []},
+    {name: 'carrier', size: 5, hitCounter: 0, coordinates: []}
+]
 
-const cpuCarrier = {length: 5, hitCounter: 0, coordinates: []}
-const cpuBattleship = {length: 4, hitCounter: 0, coordinates: []}
-const cpuDestroyer = {length: 3, hitCounter: 0, coordinates: []}
-const cpuSubmarine = {length: 3, hitCounter: 0, coordinates: []}
-const cpuPatrolBoat = {length: 2, hitCounter: 0, coordinates: []}
-
+const cpuShips = [
+    {name: 'patrolBoat', size: 2, hitCounter: 0, coordinates: []},
+    {name: 'submarine', size: 3, hitCounter: 0, coordinates: []},
+    {name: 'destroyer', size: 3, hitCounter: 0, coordinates: []},
+    {name: 'battleship', size: 4, hitCounter: 0, coordinates: []},
+    {name: 'carrier', size: 5, hitCounter: 0, coordinates: []}
+]
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let numShipsPlaced = 0 //when this becomes 5 exit setup stage and begin game
+let setup = true
+//when this becomes 5 make setup = false and begin game
+let numShipsPlaced = 0 
 
 let selectedShip = null
 
@@ -34,10 +39,12 @@ const cpuBottomGridArray = []
 /*------------------------ Cached Element References ------------------------*/
 
 const messageEl = document.querySelector('.message')
+
 const playerTopGridEl = document.querySelector('#player-top-grid')
 const playerBottomGridEl = document.querySelector('#player-bottom-grid')
 const cpuTopGridEl = document.querySelector('#cpu-top-grid')
 const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
+
 const carrierEl = document.querySelector('#carrier')
 const battleshipEl = document.querySelector('#battleship')
 const destroyerEl = document.querySelector('#destroyer')
@@ -51,7 +58,7 @@ const init = () => {
     let turn = 'player'
     let winner = false
     let playerShipCount = 5
-    let computerShipCount = 5
+    let cpuShipCount = 5
     const playerTopGridArray = []
     const playerBottomGridArray = []
     const cpuTopGridArray = []
@@ -70,16 +77,11 @@ const renderBoard = () => {
             playerBottomGridArray.push(new Cell(i,j,playerBottomGridEl))
             cpuTopGridArray.push(new Cell(i,j,cpuTopGridEl))
             cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
-            // const div = document.createElement('div')               //create divs in constructor instead?
-            // topGridEl.appendChild(div)
         }
     }
 }    
 
 //const updateBoard = (?) => {} // updates board after each turn                                                      
-
-
-
 
 // top grid cell object constructor
  function Cell(row, col, element) {
@@ -94,12 +96,45 @@ const renderBoard = () => {
     divEl.classList.add('clickable-square')
     divEl.dataset.row = row
     divEl.dataset.col = col
-    element.appendChild(divEl)
-    //divEl.addEventListener('click', testHandleClick)
-    divEl.addEventListener('mouseover', changeBorderToGreen)
-    divEl.addEventListener('mouseout', changeBorderBack)   
-    divEl.addEventListener('click', handleTopGridClick)              
+    switch(element) {
+        case playerTopGridEl:
+            divEl.addEventListener('mouseover', changeBorderToGreen);
+            divEl.addEventListener('mouseout', changeBorderBack);   
+            divEl.addEventListener('click', handleTopGridClick);
+            break;
+        case playerBottomGridEl:
+            //add bottom grid event listeners
+            break;
+        default:
+            break;   
+       }
+    element.appendChild(divEl)   
 }
+
+// Functions for dealing with grid coordinates
+
+const getCellCoordinates = (cell) => {
+    let coordinates = [cell.row, cell.col]
+    return coordinates
+}
+
+const getDivCoordinates = (divEl) => {
+    let coordinates = [parseInt(divEl.dataset.row), parseInt(divEl.dataset.col)]
+    return coordinates
+}
+
+// returns div element
+const findDiv = (cell) => {
+
+}
+
+// returns cell object
+const findCell = (divEl) => {
+
+}
+
+
+// other functions
 
 const testHandleClick = (event) => {
     console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
@@ -170,10 +205,41 @@ const hitShip = (ship) => {
 }
 
 
-// player place ships
+// gets player and cpu ships on game board
 // const setup = () => {
-
+//     playerPlaceShips()
+//     cpuPlaceShips()
 // }
+
+
+// loops through player ships array
+const playerPlaceShips = () => {
+    playerShips.forEach((ship) => {
+        messageEl.innerHTML = `Place your ${ship.name}`
+
+    })
+}
+
+// ship placement algorithm
+// first ship -> carrier
+// message -> place your carrier on the bottom board, click to place, double click to rotate
+
+// event listeners
+// mouseover -> shows ship outline (green if valid, red if invalid)
+//      run location checker
+//          loop through current ship coordinates
+//          find cell at those coordinates
+//          if cell.occupied === true then invalid location
+//              display red border
+//          if click display message choose another location
+
+// click -> place -> assign location to ship, assign ship to cells
+// double click -> rotate -> orientation variable: horizontal or vertical (toggle)
+
+
+// position checker
+
+
 
 //player's first turn
 // const run = () => {
@@ -267,6 +333,8 @@ const hitShip = (ship) => {
 
 init() // starts game
 console.log(playerBottomGridArray[99])
+//setup()
+
 // setup() // player places ships
 // run() // starts the part where player and cpu select squares
 
