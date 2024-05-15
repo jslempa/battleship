@@ -24,10 +24,10 @@ const cpuShips = [
 let coordinates = [] 
 
 //cell obj that player/cpu selected
-let clickedCell = null
+let clickedCellObj = null
 
 //corresponding cell (same coordinates) on cpu/player grid
-let matchingOpponentCell = null
+let matchingCellObj = null
 
 //stores ship as needed (not sure I need this yet)
 let currentShip = null
@@ -67,16 +67,10 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
 // starts game
 const init = () => {
-    let turn = 'player'
-    let winner = false
-    let playerShipCount = 5
-    let cpuShipCount = 5
-    const playerTopGridArray = []
-    const playerBottomGridArray = []
-    const cpuTopGridArray = []
-    const cpuBottomGridArray = []
-    const arrayOfArrays = []
-    renderBoard()
+     renderBoard()
+         
+     
+     
 }
 
 //generates 4 boards with x and y axis 1 through 10          
@@ -122,8 +116,9 @@ const renderBoard = () => {
             //divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
-            // divEl.addEventListener('mouseover', changeBorderToBlue);
-            // divEl.addEventListener('mouseout', changeBorderToGray);
+            divEl.addEventListener('click', getCoordinates) 
+            divEl.addEventListener('mouseover', changeBorderToBlue);
+            divEl.addEventListener('mouseout', changeBorderToGray);
             // divEl.addEventListener('click', divToCell)
             //mouseover
             // divEl.addEventListener('mouseover', changeTwoCellsToGreen);
@@ -140,14 +135,69 @@ const renderBoard = () => {
     element.appendChild(divEl)   
 }
 
+// changes global turn variable
+const switchPlayerTurn = (turn) => {
+    if (turn === 'player') {
+        turn = 'cpu'
+    } else {
+        turn = 'player'
+    }
+} 
 
+// stores coordinates in global variable
 const getCoordinates = (event) => {
     let row = parseInt(event.target.dataset.row)
     let col = parseInt(event.target.dataset.col)
     coordinates = [row,col]
     console.log(coordinates)
+    getMatchingCellObj(coordinates)
 }
 
+// stores corresponding opponent cell obj in global variable
+const getMatchingCellObj = (coordinates) => {
+    if (turn === 'player') {
+        for (let i=0; i<cpuBottomGridArray.length; i++) {
+            if (cpuBottomGridArray[i].xy = coordinates) {
+                matchingCellObj = cpuBottomGridArray[i]
+                return
+            } else {
+                return
+            }
+        }
+    } else {
+        for (let i=0; i<playerBottomGridArray.length; i++) {
+            if (playerBottomGridArray[i].xy = coordinates) {
+                matchingCellObj = playerBottomGridArray[i]
+                return
+            } else {
+                return
+            }
+        }
+    }
+}
+
+// stores cell obj that player clicked or cpu selected in global variable
+const getClickedCellObj = (coordinates) => {
+    if (turn === 'player') {
+        for (let i=0; i<playerTopGridArrayGridArray.length; i++) {
+            if (playerTopGridArray[i].xy = coordinates) {
+                clickedCellObj = playerTopGridArray[i]  
+                return
+            } else {
+                return
+            }
+        }
+    } else {
+        for (let i=0; i<cpuTopGridArray.length; i++) {
+            if (cpuTopGridArray[i].xy = coordinates) {
+                clickedCellObj = cpuTopGridArray[i]
+                return
+            } else {
+                return
+            }
+        }
+    }
+}
 
 
 const generateRandomNumber = () => {
@@ -377,7 +427,7 @@ const playerPlaceShips = () => {
 
 // const updateMessage = (?) => {}
 
-// const changeTurn = (turn) => {} 
+
 
 // // what needs to change on the top board?
 // // what need to change on the bottom board?
@@ -421,7 +471,9 @@ const playerPlaceShips = () => {
 //     }
 
 
-// }    
+// }  
+
+
 
 
 
@@ -443,19 +495,22 @@ const playerPlaceShips = () => {
 
 init() // starts game
 
-// hardcoding a carrier on the cpu board
-cpuBottomGridArray[0].occupied = true //row 1 col 1
-cpuBottomGridArray[1].occupied = true //row 1 col 2
-cpuBottomGridArray[2].occupied = true
-cpuBottomGridArray[3].occupied = true
-cpuBottomGridArray[4].occupied = true
-cpuBottomGridArray[0].ship = 'carrier'
-cpuBottomGridArray[1].ship = 'carrier'
-cpuBottomGridArray[2].ship = 'carrier'
-cpuBottomGridArray[3].ship = 'carrier'
-cpuBottomGridArray[4].ship = 'carrier'
 
-console.log(cpuBottomGridArray[4])
+//console.log(matchingCell)
+
+// hardcoding a carrier on the cpu board
+// cpuBottomGridArray[0].occupied = true //row 1 col 1
+// cpuBottomGridArray[1].occupied = true //row 1 col 2
+// cpuBottomGridArray[2].occupied = true
+// cpuBottomGridArray[3].occupied = true
+// cpuBottomGridArray[4].occupied = true
+// cpuBottomGridArray[0].ship = 'carrier'
+// cpuBottomGridArray[1].ship = 'carrier'
+// cpuBottomGridArray[2].ship = 'carrier'
+// cpuBottomGridArray[3].ship = 'carrier'
+// cpuBottomGridArray[4].ship = 'carrier'
+
+// console.log(cpuBottomGridArray[4])
 // this.row = row
 // this.col = col
 // this.xy = [row,col]
