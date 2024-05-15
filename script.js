@@ -20,16 +20,22 @@ const cpuShips = [
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-let setup = true
+//stores coordinates targeted cell/div
+let coordinates = [] 
+
+//cell obj that player/cpu selected
+let clickedCell = null
+
+//corresponding cell (same coordinates) on cpu/player grid
+let matchingOpponentCell = null
+
+//stores ship as needed (not sure I need this yet)
+let currentShip = null
+
+//let setup = true
 //when this becomes 5 make setup = false and begin game
-
-//stores coordinates for current cell
-let currentCell= []
-
-let numShipsPlaced = 0 
-
-let selectedShip = null
-
+//let numShipsPlaced = 0 
+//let selectedShip = null
 // might not need these up here (have them in init)
 let turn = 'player'
 let winner = false
@@ -111,8 +117,9 @@ const renderBoard = () => {
     switch(element) {
         case playerTopGridEl:
             divEl.addEventListener('mouseover', changeBorderToGreen);
-            divEl.addEventListener('mouseout', changeBorderBack);   
-            divEl.addEventListener('click', handleTopGridClick);
+            divEl.addEventListener('mouseout', changeBorderToGray); 
+            divEl.addEventListener('click', getCoordinates)  
+            //divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
             // divEl.addEventListener('mouseover', changeBorderToBlue);
@@ -132,6 +139,16 @@ const renderBoard = () => {
        }
     element.appendChild(divEl)   
 }
+
+
+const getCoordinates = (event) => {
+    let row = parseInt(event.target.dataset.row)
+    let col = parseInt(event.target.dataset.col)
+    coordinates = [row,col]
+    console.log(coordinates)
+}
+
+
 
 const generateRandomNumber = () => {
     let num = Math.random()    
