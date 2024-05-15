@@ -29,23 +29,42 @@ let clickedCellObj = null
 //corresponding cell (same coordinates) on cpu/player grid
 let matchingCellObj = null
 
+//stores total hits by cpu on player ships
+let playerDamage = 0
+
+//stores total hits by player on cpu ships
+let cpuDamage = 0
+
+//did the player/cpu hit a ship during their turn
+let wasAShipHitThisTurn = false
+
+//current turn
+let turn = 'player'
+
+//is there a winner
+let winner = false
+
+const playerTopGridArray = []
+const playerBottomGridArray = []
+const cpuTopGridArray = []
+const cpuBottomGridArray = []
+const arrayOfArrays = []
+
 //stores ship as needed (not sure I need this yet)
-let currentShip = null
+//let currentShip = null
 
 //let setup = true
 //when this becomes 5 make setup = false and begin game
 //let numShipsPlaced = 0 
 //let selectedShip = null
 // might not need these up here (have them in init)
-let turn = 'player'
-let winner = false
-let playerShipCount = 5
-let cpuShipCount = 5
-const playerTopGridArray = []
-const playerBottomGridArray = []
-const cpuTopGridArray = []
-const cpuBottomGridArray = []
-const arrayOfArrays = []
+
+//let playerShipCount = 5
+// let cpuShipCount = 5
+
+//let startGame = false
+
+
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -67,7 +86,18 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
 // starts game
 const init = () => {
-     renderBoard()
+    renderBoard()
+    //do something with matching cell
+    updateMatchingCell(matchingCellObj)
+    //do something with clicked cell
+    //updateClickedCell(clickedCellObj)
+    //update div colors
+    //check for winner
+    //checkForWinner()
+    //switch turn
+    //switchPlayerTurn()
+     
+     
          
      
      
@@ -88,21 +118,19 @@ const renderBoard = () => {
     arrayOfArrays.push(playerBottomGridArray)
     arrayOfArrays.push(cpuTopGridArray)
     arrayOfArrays.push(cpuBottomGridArray)
-} 
-
-//const updateBoard = (?) => {} // updates board after each turn                                                      
+}                                                 
 
 // grid cell object constructor
  function Cell(row, col, element) {
-    this.row = row
-    this.col = col
+    // this.row = row
+    // this.col = col
     this.xy = [row,col]
     this.board = element.id
     this.selected = false
     this.occupied = false
     this.hit = false
     this.ship = null
-    this.color = null
+    this.color = 'lightslategray'
     const divEl = document.createElement('div')
     divEl.classList.add('clickable-square')
     divEl.dataset.board = element.id
@@ -110,15 +138,15 @@ const renderBoard = () => {
     divEl.dataset.col = col
     switch(element) {
         case playerTopGridEl:
-            divEl.addEventListener('mouseover', changeBorderToGreen);
-            divEl.addEventListener('mouseout', changeBorderToGray); 
+            divEl.addEventListener('mouseover', makeBorderGreen);
+            divEl.addEventListener('mouseout', makeBorderGray); 
             divEl.addEventListener('click', getCoordinates)  
             //divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
             divEl.addEventListener('click', getCoordinates) 
-            divEl.addEventListener('mouseover', changeBorderToBlue);
-            divEl.addEventListener('mouseout', changeBorderToGray);
+            divEl.addEventListener('mouseover', makeBorderBlue);
+            divEl.addEventListener('mouseout', makeBorderGray);
             // divEl.addEventListener('click', divToCell)
             //mouseover
             // divEl.addEventListener('mouseover', changeTwoCellsToGreen);
@@ -151,6 +179,9 @@ const getCoordinates = (event) => {
     coordinates = [row,col]
     console.log(coordinates)
     getMatchingCellObj(coordinates)
+    getClickedCellObj(coordinates)
+    console.log(matchingCellObj)
+    console.log(clickedCellObj)
 }
 
 // stores corresponding opponent cell obj in global variable
@@ -179,7 +210,7 @@ const getMatchingCellObj = (coordinates) => {
 // stores cell obj that player clicked or cpu selected in global variable
 const getClickedCellObj = (coordinates) => {
     if (turn === 'player') {
-        for (let i=0; i<playerTopGridArrayGridArray.length; i++) {
+        for (let i=0; i<playerTopGridArray.length; i++) {
             if (playerTopGridArray[i].xy = coordinates) {
                 clickedCellObj = playerTopGridArray[i]  
                 return
@@ -199,6 +230,42 @@ const getClickedCellObj = (coordinates) => {
     }
 }
 
+
+const updateMatchingCell = (cellObj) => {
+    if (cellObj.selected === true) {
+        messageEl.innerHTML = 'Pick another square'
+        console.log('pick another square')
+    } else {
+        cellObj.selected = true
+        if (cell.occupied === false) {
+            cellObj.hit = false
+            cellObj.color = 'white'
+            wasAShipHitThisTurn = false
+            messageEl.innerHTML = 'Miss!'
+            console.log('miss')
+        } else {
+            cellObj.hit = true
+            cellObj.color = 'red'
+            wasAShipHitThisTurn = true
+            if (turn === 'player') {
+                messageEl.innerHTML = 'Computer was hit!'
+                console.log('computer was hit')
+                cpuDamage++
+            } else {
+                messageEl.innerHTML = 'You were hit!'
+                console.log('you were hit')
+                playerDamage++
+            }
+        }
+    }
+}
+
+
+
+
+
+
+//const updateBoard = (?) => {} // updates board after each turn 
 
 const generateRandomNumber = () => {
     let num = Math.random()    
@@ -229,14 +296,19 @@ const generateRandomNumber = () => {
 
 // }
 
-const changeBorderToBlue = (event) => {
-    event.target.style.borderColor = 'aqua'
-    //console.log(event.target)
+const makeBorderGreen = (event) => {
+    event.target.style.borderColor = 'lime'
 }
 
-const changeBorderToGray = (event) => {
+const makeBorderBlue = (event) => {
+    event.target.style.borderColor = 'aqua'
+}
+
+const makeBorderGray = (event) => {
     event.target.style.borderColor = 'lightslategray'
 }
+
+
 
 
 
@@ -309,9 +381,7 @@ const testHandleClick = (event) => {
     console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
 }
 
-const changeBorderToGreen = (event) => {
-    event.target.style.borderColor = 'lime'
-}
+
 
 //trying to get mouseover cell and adjacent cell to turn green
 const changeTwoCellsToGreen = (event) => {
