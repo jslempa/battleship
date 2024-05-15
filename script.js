@@ -3,19 +3,19 @@
 const gridSize = 10 //change this to a let if I want to try to let player change grid size
 
 const playerShips = [
-    {name: 'patrolBoat', size: 2, hitCounter: 0, coordinates: []},
-    {name: 'submarine', size: 3, hitCounter: 0, coordinates: []},
-    {name: 'destroyer', size: 3, hitCounter: 0, coordinates: []},
-    {name: 'battleship', size: 4, hitCounter: 0, coordinates: []},
-    {name: 'carrier', size: 5, hitCounter: 0, coordinates: []}
+    {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal',coordinates: []},
+    {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
 ]
 
 const cpuShips = [
-    {name: 'patrolBoat', size: 2, hitCounter: 0, coordinates: []},
-    {name: 'submarine', size: 3, hitCounter: 0, coordinates: []},
-    {name: 'destroyer', size: 3, hitCounter: 0, coordinates: []},
-    {name: 'battleship', size: 4, hitCounter: 0, coordinates: []},
-    {name: 'carrier', size: 5, hitCounter: 0, coordinates: []}
+    {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+    {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
 ]
 
 /*---------------------------- Variables (state) ----------------------------*/
@@ -115,10 +115,13 @@ const renderBoard = () => {
             divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
+            // divEl.addEventListener('mouseover', changeBorderToBlue);
+            // divEl.addEventListener('mouseout', changeBorderToGray);
+            // divEl.addEventListener('click', divToCell)
             //mouseover
             // divEl.addEventListener('mouseover', changeTwoCellsToGreen);
             // divEl.addEventListener('mouseout', changeBorderBack);
-            divEl.addEventListener('click', divToCell)
+            //divEl.addEventListener('click', divToCell)
             //divEl.addEventListener('click', getDiv);
             //divEl.addEventListener('mouseover', showOutline())
             //click
@@ -130,36 +133,84 @@ const renderBoard = () => {
     element.appendChild(divEl)   
 }
 
-// Functions for dealing with grid coordinates
+const generateRandomNumber = () => {
+    let num = Math.random()    
+    let integer = Math.floor(num * 10) + 1
+    return integer
+}
 
-//don't need this anymore -> just use cell.xy
-//returns coords of cell as ARRAY
-// const getCellXY = (cell) => {
-//     let coordinates = [cell.row, cell.col]
-//     return coordinates
+// hardcoding the ships
+// const randomizeBoard = (array) => {
+//     let num = generateRandomNumber()
+//     if (array[num].col > 6) {}
 // }
 
-// returns coords of div as ARRAY
-const getDivXY = (divEl) => {
-    let coordinates = [parseInt(divEl.dataset.row), parseInt(divEl.dataset.col)]
-    return coordinates
+
+
+// Setup phase
+
+// const setup = () => {
+//     playerShips.forEach((ship) =>
+//     {
+//         messageEl.innerHTML = `Place your ${ship}`
+//         placeShip(ship)
+//         numShipsPlaced++
+//     })
+// }
+
+// const placeShip = (ship) => {
+
+// }
+
+const changeBorderToBlue = (event) => {
+    event.target.style.borderColor = 'aqua'
+    //console.log(event.target)
 }
 
-// input cell object -> return div element
-const getDiv = (cell) => {
-    console.log(cell)
-    //let matchingDiv = document.querySelector(`[id='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
-    //matchingDiv.style.borderColor = 'lime'
-    //return matchingDiv
-}
-
-// input div -> return cell object
-const getCell = (divEl) => {
-    let coords = getDivXY(divEl)
+const changeBorderToGray = (event) => {
+    event.target.style.borderColor = 'lightslategray'
 }
 
 
 
+// turn off top grid event listeners when setup = true
+// player is asked to place carrier (first ship in array)
+// bottom grid event listeners are active when setup = true
+    //mouseover - show outline of ship
+        //need to know div coords and ship.size and orientation
+        //find cells that ship would occupy and update corresponding divs
+    //mouseout - return divs to original state    
+    //click - place ship  
+    //doubleclick - rotate ship  
+
+
+
+
+
+
+
+
+// Functions for dealing with grid coordinates
+
+// Doesn't work
+// const divToCell = (div) => {
+//     let board = div.dataset.board
+//     let row = parseInt(div.dataset.row)
+//     let col = parseInt(div.dataset.col)
+//     let matchingCell = {}
+//     arrayOfArrays.forEach((array) => {
+//         for (let i=0; i<array.length; i++) {
+//             if (array[i].board === board && array[i].row === row && array[i].col === col) {
+//                 matchingCell = array[i]
+//             }
+//         }
+//     })
+//     console.log(typeof matchingCell)
+//     //making sure it returns an object
+// }
+
+
+// THIS WORKS, KEEPING SO I DON'T BREAK IT
 // THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
 // input div, output cell obj
 const divToCell = (event) => {
@@ -181,9 +232,6 @@ const divToCell = (event) => {
 // THIS LINKS A CELL OBJ TO THE DIV THAT REPRESENTS IT
 // input cell obj, output div
 const celltoDiv = (cell) => {
-    // let board = cell.board
-    // let row = cell.row
-    // let col = cell.col
     let matchingDiv = document.querySelector(`[data-board='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
     return matchingDiv
 }
@@ -377,7 +425,33 @@ const playerPlaceShips = () => {
 /*--------------------------- This runs the game ----------------------------*/
 
 init() // starts game
-console.log(celltoDiv(playerTopGridArray[0]))
+
+// hardcoding a carrier on the cpu board
+cpuBottomGridArray[0].occupied = true //row 1 col 1
+cpuBottomGridArray[1].occupied = true //row 1 col 2
+cpuBottomGridArray[2].occupied = true
+cpuBottomGridArray[3].occupied = true
+cpuBottomGridArray[4].occupied = true
+cpuBottomGridArray[0].ship = 'carrier'
+cpuBottomGridArray[1].ship = 'carrier'
+cpuBottomGridArray[2].ship = 'carrier'
+cpuBottomGridArray[3].ship = 'carrier'
+cpuBottomGridArray[4].ship = 'carrier'
+
+console.log(cpuBottomGridArray[4])
+// this.row = row
+// this.col = col
+// this.xy = [row,col]
+// this.board = element.id
+// this.selected = false
+// this.occupied = false
+// this.hit = false
+// this.ship = null
+// this.color = null
+
+
+//randomizeBoard(playerBottomGridArray)
+//console.log(celltoDiv(playerTopGridArray[0]))
 
 
 //console.log(cpuBottomGridArray[99])
@@ -386,9 +460,7 @@ console.log(celltoDiv(playerTopGridArray[0]))
 // setup() // player places ships
 // run() // starts the part where player and cpu select squares
 
-// playerTopGridArray.forEach((cell) => {
-//     console.log(`${cell.row}, ${cell.col}`)
-// })
+
 
 
 
@@ -422,10 +494,6 @@ function to match div id to corresponding array value (row, col)
 - if not selected
     - change to selected
     - 
-
-
-
-
 ship properties
 
 ? name
@@ -491,3 +559,4 @@ DONE Get Cell object with same row and col as clicked div (function returns the 
 
 
 */
+
