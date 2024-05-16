@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <script defer src="script.js"></script>
     <title>Battleship</title>
 </head>
@@ -11,7 +14,7 @@
     
     <h1>Battleship</h1>
 
-    <h2 class="message">Pick a square</h2>
+    <h4 class="message">Your turn!</h2>
 
     <div id="all-grids-container">   
     
@@ -19,9 +22,9 @@
 
         <div class="board player" id="player-bottom-grid"></div>
 
-        <div class="board cpu" id="cpu-top-grid"></div>
+        <div class="board cpu hidden" id="cpu-top-grid"></div>
 
-        <div class="board cpu" id="cpu-bottom-grid"></div>
+        <div class="board cpu hidden" id="cpu-bottom-grid"></div>
       
     </div>     
 

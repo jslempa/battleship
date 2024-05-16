@@ -20,6 +20,9 @@ const cpuShips = [
 
 /*---------------------------- Variables (state) ----------------------------*/
 
+//for testing
+let testing = false
+
 //stores coordinates targeted cell/div
 let coordinates = [] 
 
@@ -86,7 +89,10 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
 // starts game
 const init = () => {
+    //checkGameState() //doesn't work here
     generateBoard()
+    //checkGameState() //doesn't work here
+      
     //placeShips()
     //do something with matching cell
     //updateMatchingCell(matchingCellObj)
@@ -117,12 +123,21 @@ const generateBoard = () => {
     arrayOfArrays.push(playerBottomGridArray)
     arrayOfArrays.push(cpuTopGridArray)
     arrayOfArrays.push(cpuBottomGridArray)
-
+    //checkGameState() //nope
 }
 
 //runs after turn, updates div colors
 const renderBoard = () => {
 
+}
+
+//shows cpu boards if in test state
+const checkGameState = () => {
+    if (!testing) {
+        document.querySelectorAll('.cpu').classList.add('.hidden')
+    } else {
+        document.querySelectorAll('.cpu').classList.remove('.hidden')
+    }
 }
 
 // grid cell object constructor
@@ -596,7 +611,9 @@ const changeBorderBack = (event) => {
 
 /*--------------------------- This runs the game ----------------------------*/
 
+//checkGameState() //doesn't work here
 init() // starts game
+//checkGameState() //doesn't work here
 
 
 //console.log(matchingCell)
