@@ -86,9 +86,10 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
 // starts game
 const init = () => {
-    renderBoard()
+    generateBoard()
+    //placeShips()
     //do something with matching cell
-    updateMatchingCell(matchingCellObj)
+    //updateMatchingCell(matchingCellObj)
     //do something with clicked cell
     //updateClickedCell(clickedCellObj)
     //update div colors
@@ -96,16 +97,13 @@ const init = () => {
     //checkForWinner()
     //switch turn
     //switchPlayerTurn()
-     
-     
-         
-     
+    
      
 }
 
 //generates 4 boards with x and y axis 1 through 10          
 //create 4 boards- display all for testing- remove divs from cpu boards for final product
-const renderBoard = () => {                                    
+const generateBoard = () => {                                    
     for (let i=1; i<=gridSize; i++) {                           
         for (let j=1; j<=gridSize; j++) {
             playerTopGridArray.push(new Cell(i,j,playerTopGridEl))
@@ -114,11 +112,18 @@ const renderBoard = () => {
             cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
         }
     }
+    cpuBottomGridArray[0].occupied = true
     arrayOfArrays.push(playerTopGridArray)
     arrayOfArrays.push(playerBottomGridArray)
     arrayOfArrays.push(cpuTopGridArray)
     arrayOfArrays.push(cpuBottomGridArray)
-}                                                 
+
+}
+
+//runs after turn, updates div colors
+const renderBoard = () => {
+
+}
 
 // grid cell object constructor
  function Cell(row, col, element) {
@@ -130,7 +135,7 @@ const renderBoard = () => {
     this.occupied = false
     this.hit = false
     this.ship = null
-    this.color = 'lightslategray'
+    this.backgroundColor = 'lightslategray'
     const divEl = document.createElement('div')
     divEl.classList.add('clickable-square')
     divEl.dataset.board = element.id
@@ -141,27 +146,26 @@ const renderBoard = () => {
             divEl.addEventListener('mouseover', makeBorderGreen);
             divEl.addEventListener('mouseout', makeBorderGray); 
             divEl.addEventListener('click', getCoordinates)  
-            //divEl.addEventListener('click', handleTopGridClick);
             break;
         case playerBottomGridEl:
-            divEl.addEventListener('click', getCoordinates) 
             divEl.addEventListener('mouseover', makeBorderBlue);
             divEl.addEventListener('mouseout', makeBorderGray);
-            // divEl.addEventListener('click', divToCell)
-            //mouseover
-            // divEl.addEventListener('mouseover', changeTwoCellsToGreen);
-            // divEl.addEventListener('mouseout', changeBorderBack);
-            //divEl.addEventListener('click', divToCell)
-            //divEl.addEventListener('click', getDiv);
-            //divEl.addEventListener('mouseover', showOutline())
-            //click
-            //doubleclick
             break;
         default:
             break;   
        }
     element.appendChild(divEl)   
 }
+
+const placeShips = () => {
+    for (let i=0; i<cpuBottomGridArray.length; i+=5) {
+        cpuBottomGridArray[i].occupied = true
+    }
+}
+
+
+
+
 
 // changes global turn variable
 const switchPlayerTurn = (turn) => {
@@ -178,10 +182,19 @@ const getCoordinates = (event) => {
     let col = parseInt(event.target.dataset.col)
     coordinates = [row,col]
     console.log(coordinates)
-    getMatchingCellObj(coordinates)
-    getClickedCellObj(coordinates)
-    console.log(matchingCellObj)
-    console.log(clickedCellObj)
+    let testMatchingCell = getMatchingCellObj(coordinates)
+    testMatchingCell = updateMatchingCell(testMatchingCell)
+
+    let testClickedCell = getClickedCellObj(coordinates)
+    testClickedCell = updateClickedCell(testClickedCell)
+    //renderBoard()
+
+    changeCellColor(testMatchingCell)
+
+    changeCellColor(testClickedCell)
+    //console.log(testClickedCell)
+
+   
 }
 
 // stores corresponding opponent cell obj in global variable
@@ -189,8 +202,7 @@ const getMatchingCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<cpuBottomGridArray.length; i++) {
             if (cpuBottomGridArray[i].xy = coordinates) {
-                matchingCellObj = cpuBottomGridArray[i]
-                return
+                return matchingCellObj = cpuBottomGridArray[i]                
             } else {
                 return
             }
@@ -198,8 +210,7 @@ const getMatchingCellObj = (coordinates) => {
     } else {
         for (let i=0; i<playerBottomGridArray.length; i++) {
             if (playerBottomGridArray[i].xy = coordinates) {
-                matchingCellObj = playerBottomGridArray[i]
-                return
+                return matchingCellObj = playerBottomGridArray[i]
             } else {
                 return
             }
@@ -212,8 +223,7 @@ const getClickedCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<playerTopGridArray.length; i++) {
             if (playerTopGridArray[i].xy = coordinates) {
-                clickedCellObj = playerTopGridArray[i]  
-                return
+                return clickedCellObj = playerTopGridArray[i]                  
             } else {
                 return
             }
@@ -221,8 +231,7 @@ const getClickedCellObj = (coordinates) => {
     } else {
         for (let i=0; i<cpuTopGridArray.length; i++) {
             if (cpuTopGridArray[i].xy = coordinates) {
-                clickedCellObj = cpuTopGridArray[i]
-                return
+                return clickedCellObj = cpuTopGridArray[i]
             } else {
                 return
             }
@@ -230,22 +239,22 @@ const getClickedCellObj = (coordinates) => {
     }
 }
 
-
+//updates the target cell object (not div) on other player's board
 const updateMatchingCell = (cellObj) => {
-    if (cellObj.selected === true) {
+    if (cellObj.selected === true) {    
         messageEl.innerHTML = 'Pick another square'
         console.log('pick another square')
     } else {
         cellObj.selected = true
-        if (cell.occupied === false) {
+        if (cellObj.occupied === false) {
             cellObj.hit = false
-            cellObj.color = 'white'
+            cellObj.backgroundColor = 'white'
             wasAShipHitThisTurn = false
             messageEl.innerHTML = 'Miss!'
             console.log('miss')
         } else {
             cellObj.hit = true
-            cellObj.color = 'red'
+            cellObj.backgroundColor = 'red'
             wasAShipHitThisTurn = true
             if (turn === 'player') {
                 messageEl.innerHTML = 'Computer was hit!'
@@ -258,11 +267,45 @@ const updateMatchingCell = (cellObj) => {
             }
         }
     }
+    return cellObj
+}
+
+//updates the clicked cell obj (not div) on current player's board
+const updateClickedCell = (cellObj) => {
+    if (!cellObj.selected) {
+        cellObj.selected = true
+    }
+    if (wasAShipHitThisTurn === true) {
+        cellObj.backgroundColor = 'red'
+    } else {
+        cellObj.backgroundColor = 'white'
+    }
+    return cellObj
+}
+
+//returns the corresponding div
+const getDiv = (cellObj) => {
+    let row = cellObj.xy[0]
+    let col = cellObj.xy[1]
+    let board = cellObj.board
+    let div = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
+    return div
+
 }
 
 
+//changes color of div tied to cell object
+const changeCellColor = (cellObj) => {
+    let row = cellObj.xy[0]
+    let col = cellObj.xy[1]
+    let board = cellObj.board
+    let matchingDiv = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
+    matchingDiv.style.backgroundColor = cellObj.backgroundColor
+    matchingDiv.style.borderColor = cellObj.backgroundColor
+    // console.log(matchingDiv)
+    // console.log(cellObj)
 
-
+}
 
 
 //const updateBoard = (?) => {} // updates board after each turn 
@@ -403,56 +446,46 @@ const changeBorderBack = (event) => {
 }
 
 //shows ship outline -> if valid outline is green if invalid outline is red
-const showOutline = (event) => {
+// const showOutline = (event) => {
 
-}
+// }
 
-// determines hit or miss when picking a square during your turn
-const handleTopGridClick = (event) => {
-    //let targetCell = getCellObj(event.target.dataset.row, event.target.dataset.col, playerTopGridArray)
-    let targetCell = divToCell(event)
-    handleCell(targetCell)
-    event.target.style.backgroundColor = targetCell.color
-    console.log(targetCell)
-
-    //handleDiv(targetCell)
-}   
 
 // updates cell obj properties
-const handleCell = (cell) => {
-    if (cell.selected === true) {                               // square is already picked 
-        messageEl.innerHTML = 'Pick another square'
-        console.log('pick another square')                      // tell player to pick again
-    } else {                                                    // square is not already picked
-        cell.selected = true
-        cell.color = 'white'                                    // mark square as selected
-        if (cell.occupied === false) {                          // square does not have a ship
-            messageEl.innerHTML = 'Miss!'
-            console.log('miss')                                 // tell player it was a miss
-            cell.hit = false                                    // mark square as miss                           
-        } else {                                                // square has a ship
-            cell.hit = true
-            cell.color = 'red'
-            hitShip(cell.ship)                                     // mark square as hit
-        }                                                  //change board to display miss
-    }
-}
+// const handleCell = (cell) => {
+//     if (cell.selected === true) {                               // square is already picked 
+//         messageEl.innerHTML = 'Pick another square'
+//         console.log('pick another square')                      // tell player to pick again
+//     } else {                                                    // square is not already picked
+//         cell.selected = true
+//         cell.color = 'white'                                    // mark square as selected
+//         if (cell.occupied === false) {                          // square does not have a ship
+//             messageEl.innerHTML = 'Miss!'
+//             console.log('miss')                                 // tell player it was a miss
+//             cell.hit = false                                    // mark square as miss                           
+//         } else {                                                // square has a ship
+//             cell.hit = true
+//             cell.color = 'red'
+//             hitShip(cell.ship)                                     // mark square as hit
+//         }                                                  //change board to display miss
+//     }
+// }
 
 // prob don't need this (change color in handleCell and handleTopGridClick)
 // updates div color
 // const handleDiv = (cell) => {}
 
 //marks ship as hit
-const hitShip = (ship) => {
-    ship.hitCounter++
-    if (ship.hitCounter === ship.health && turn === 'player') {
-        playerShipCount--
-        checkForWinner()    
-    } else {
-        return
-    }
+// const hitShip = (ship) => {
+//     ship.hitCounter++
+//     if (ship.hitCounter === ship.health && turn === 'player') {
+//         playerShipCount--
+//         checkForWinner()    
+//     } else {
+//         return
+//     }
 
-}
+// }
 
 // gets player and cpu ships on game board
 // const setup = () => {
@@ -461,12 +494,12 @@ const hitShip = (ship) => {
 // }
 
 // loops through player ships array
-const playerPlaceShips = () => {
-    playerShips.forEach((ship) => {
-        messageEl.innerHTML = `Place your ${ship.name}`
+// const playerPlaceShips = () => {
+//     playerShips.forEach((ship) => {
+//         messageEl.innerHTML = `Place your ${ship.name}`
 
-    })
-}
+//     })
+// }
 
 // ship placement algorithm
 // first ship -> carrier

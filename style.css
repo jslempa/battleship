@@ -15,8 +15,10 @@ h1, h2 {
 
 .board {
     display: grid;
-    grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-    grid-template-rows: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    /* grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%; */
+    /* grid-template-rows: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%; */
 }
 
 .clickable-square {
