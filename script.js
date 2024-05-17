@@ -2,27 +2,10 @@
 
 const gridSize = 10
 
-// not currently being used
-// const playerShips = [
-//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal',coordinates: []},
-//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
-// ]
-
-// const cpuShips = [
-//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
-// ]
-
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-// stores coordinates targeted cell/div
+// stores coordinates of targeted cell/div
 let coordinates = [] 
 
 // cell obj that player/cpu selected
@@ -43,7 +26,7 @@ let wasAShipHitThisTurn = false
 // current turn
 let turn = 'player'
 
-// is there a winner
+// is there a winner this turn
 let winner = false
 
 // arrays that store cell objects for each board
@@ -55,20 +38,6 @@ const cpuBottomGridArray = []
 // master array that stores the four above arrays
 const arrayOfArrays = []
 
-//stores ship as needed (not sure I need this yet)
-//let currentShip = null
-
-//let setup = true
-//when this becomes 5 make setup = false and begin game
-//let numShipsPlaced = 0 
-//let selectedShip = null
-// might not need these up here (have them in init)
-
-//let playerShipCount = 5
-// let cpuShipCount = 5
-
-//let startGame = false
-
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -78,34 +47,15 @@ const playerBottomGridEl = document.querySelector('#player-bottom-grid')
 const cpuTopGridEl = document.querySelector('#cpu-top-grid')
 const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
-// for if I want ships that you can click on
-// const carrierEl = document.querySelector('#carrier')
-// const battleshipEl = document.querySelector('#battleship')
-// const destroyerEl = document.querySelector('#destroyer')
-// const submarineEl = document.querySelector('#submarine')
-// const patrolBoatEl = document.querySelector('#patrol-boat')
-
 
 /*-------------------------------- Functions --------------------------------*/
 
 // starts game
 const init = () => {
-    generateBoard()
-    
-    //placeShips()
-    //do something with matching cell
-    //updateMatchingCell(matchingCellObj)
-    //do something with clicked cell
-    //updateClickedCell(clickedCellObj)
-    //update div colors
-    //check for winner
-    //checkForWinner()
-    //switch turn
-    //switchPlayerTurn()   
-     
+    generateBoard()     
 }
 
-//generates 4 boards with x and y axis 1 through 10          
+// generates 4 boards with x and y axis 1 through 10          
 const generateBoard = () => {                                    
     for (let i=1; i<=gridSize; i++) {                           
         for (let j=1; j<=gridSize; j++) {
@@ -169,31 +119,18 @@ const getCoordinates = (event) => {
     coordinates = [row,col]
     console.log(coordinates)
    
-
     let testMatchingCell = getMatchingCellObj(coordinates)
     testMatchingCell = updateMatchingCellObj(testMatchingCell)
 
     let testClickedCell = getClickedCellObj(coordinates)
     testClickedCell = updateClickedCellObj(testClickedCell)
-    //renderBoard()
 
     changeCellColor(testMatchingCell)
-
     changeCellColor(testClickedCell)
     console.log(testClickedCell)
-
-
-    //NEW STUFF
-
-//    let testCell = getMatchingCellObj(coordinates)
-//    console.log('before', testCell)
-//    updateMatchingCellObj(testCell)
-//    console.log('after', testCell)
-
-//    renderBoard()
 }
 
-// returns corresponding opponent cell obj
+// returns corresponding opponent cell object
 const getMatchingCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<cpuBottomGridArray.length; i++) {
@@ -214,7 +151,7 @@ const getMatchingCellObj = (coordinates) => {
     }
 }
 
-// returns cell obj that player clicked/cpu selected
+// returns cell object that player/cpu selected
 const getClickedCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<playerTopGridArray.length; i++) {
@@ -266,7 +203,7 @@ const updateMatchingCellObj = (cellObj) => {
     return cellObj
 }
 
-// updates the clicked cell obj (not div) on current player's board
+// updates the clicked cell object (not div) on current player's board
 const updateClickedCellObj = (cellObj) => {
     if (!cellObj.selected) {
         cellObj.selected = true
@@ -279,16 +216,6 @@ const updateClickedCellObj = (cellObj) => {
     return cellObj
 }
 
-//returns the corresponding div
-const getDiv = (cellObj) => {
-    let row = cellObj.xy[0]
-    let col = cellObj.xy[1]
-    let board = cellObj.board
-    let div = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
-    return div
-}
-
-
 //changes color of div tied to cell object
 const changeCellColor = (cellObj) => {
     let row = cellObj.xy[0]
@@ -297,9 +224,6 @@ const changeCellColor = (cellObj) => {
     let matchingDiv = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
     matchingDiv.style.backgroundColor = cellObj.backgroundColor
     matchingDiv.style.borderColor = cellObj.backgroundColor
-    // console.log(matchingDiv)
-    // console.log(cellObj)
-
 }
 
 const makeBorderGreen = (event) => {
@@ -314,17 +238,65 @@ const makeBorderGray = (event) => {
     event.target.style.borderColor = 'lightslategray'
 }
 
+/*---------------------------- This runs the game ------------------------------*/
 
-//TEST FUNCTIONS
+init()
 
-const getCellState = (event) => {
-    let row = parseInt(event.target.dataset.row)
-    let col = parseInt(event.target.dataset.col)
-    coordinates = [row,col]
-    let testCell = getMatchingCellObj(coordinates)
-    console.log(`selected is ${testCell.selected}`)
-   
-}    
+
+
+
+
+
+
+
+// FUNCTIONS FOR TESTING
+
+// const getCellState = (event) => {
+//     let row = parseInt(event.target.dataset.row)
+//     let col = parseInt(event.target.dataset.col)
+//     coordinates = [row,col]
+//     let testCell = getMatchingCellObj(coordinates)
+//     console.log(`selected is ${testCell.selected}`)   
+// }    
+
+// GRID COORDINATE FUNCTIONS
+
+// THIS WORKS, KEEPING SO I DON'T BREAK IT
+// THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
+// input div, output cell obj
+// const divToCell = (event) => {
+//     let board = event.target.dataset.board
+//     let row = parseInt(event.target.dataset.row)
+//     let col = parseInt(event.target.dataset.col)
+//     let matchingCell = {}
+//     arrayOfArrays.forEach((array) => {
+//         for (let i=0; i<array.length; i++) {
+//             if (array[i].board === board && array[i].row === row && array[i].col === col) {
+//                 matchingCell = array[i]
+//             }
+//         }
+//     })
+//     //console.log(typeof matchingCell)
+//     //making sure it returns an object
+// }
+
+// THIS LINKS A CELL OBJ TO THE DIV THAT REPRESENTS IT
+// input cell obj, output div
+// const celltoDiv = (cell) => {
+//     let matchingDiv = document.querySelector(`[data-board='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
+//     return matchingDiv
+// }
+
+//returns the corresponding div
+// const getDiv = (cellObj) => {
+//     let row = cellObj.xy[0]
+//     let col = cellObj.xy[1]
+//     let board = cellObj.board
+//     let div = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
+//     return div
+// }
+
+// MISC FUNCTIONS
 
 //const updateBoard = (?) => {} // updates board after each turn 
 
@@ -409,36 +381,6 @@ const getCellState = (event) => {
     //click - place ship  
     //doubleclick - rotate ship  
 
-// Functions for dealing with grid coordinates
-
-// THIS WORKS, KEEPING SO I DON'T BREAK IT
-// THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
-// input div, output cell obj
-const divToCell = (event) => {
-    let board = event.target.dataset.board
-    let row = parseInt(event.target.dataset.row)
-    let col = parseInt(event.target.dataset.col)
-    let matchingCell = {}
-    arrayOfArrays.forEach((array) => {
-        for (let i=0; i<array.length; i++) {
-            if (array[i].board === board && array[i].row === row && array[i].col === col) {
-                matchingCell = array[i]
-            }
-        }
-    })
-    //console.log(typeof matchingCell)
-    //making sure it returns an object
-}
-
-// THIS LINKS A CELL OBJ TO THE DIV THAT REPRESENTS IT
-// input cell obj, output div
-const celltoDiv = (cell) => {
-    let matchingDiv = document.querySelector(`[data-board='${cell.board}'][data-row='${cell.row}'][data-col='${cell.col}']`)
-    return matchingDiv
-}
-
-// other functions
-
 // updates cell obj properties
 // const handleCell = (cell) => {
 //     if (cell.selected === true) {                               // square is already picked 
@@ -458,7 +400,6 @@ const celltoDiv = (cell) => {
 //         }                                                  //change board to display miss
 //     }
 // }
-
 
 //marks ship as hit
 // const hitShip = (ship) => {
@@ -538,11 +479,7 @@ const celltoDiv = (cell) => {
 // submarineEl.addEventListener('click', selectShip)
 // patrolBoatEl.addEventListener('click', selectShip)
 
-/*--------------------------- This runs the game ----------------------------*/
-
-init()
-
-
+// testing
 // hardcoding a carrier on the cpu board
 // cpuBottomGridArray[0].occupied = true //row 1 col 1
 // cpuBottomGridArray[1].occupied = true //row 1 col 2
@@ -554,5 +491,53 @@ init()
 // cpuBottomGridArray[2].ship = 'carrier'
 // cpuBottomGridArray[3].ship = 'carrier'
 // cpuBottomGridArray[4].ship = 'carrier'
+
+// not currently being used
+// const playerShips = [
+//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal',coordinates: []},
+//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
+// ]
+
+// const cpuShips = [
+//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
+// ]
+
+//stores ship as needed (not sure I need this yet)
+//let currentShip = null
+
+//let setup = true
+//when this becomes 5 make setup = false and begin game
+//let numShipsPlaced = 0 
+//let selectedShip = null
+// might not need these up here (have them in init)
+
+//let playerShipCount = 5
+// let cpuShipCount = 5
+
+//let startGame = false
+
+// for if I want ships that you can click on
+// const carrierEl = document.querySelector('#carrier')
+// const battleshipEl = document.querySelector('#battleship')
+// const destroyerEl = document.querySelector('#destroyer')
+// const submarineEl = document.querySelector('#submarine')
+// const patrolBoatEl = document.querySelector('#patrol-boat')
+
+// inside init()    
+    //placeShips()
+    //do something with matching cell
+    //updateMatchingCell(matchingCellObj)
+    //do something with clicked cell
+    //updateClickedCell(clickedCellObj)
+    //update div colors
+    //checkForWinner()
+    //switchPlayerTurn()   
 
 
