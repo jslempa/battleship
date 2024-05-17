@@ -2,52 +2,57 @@
 
 const gridSize = 10
 
-const playerShips = [
-    {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal',coordinates: []},
-    {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
-]
+// not currently being used
+// const playerShips = [
+//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal',coordinates: []},
+//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
+// ]
 
-const cpuShips = [
-    {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal', coordinates: []},
-    {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
-]
+// const cpuShips = [
+//     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'submarine', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'destroyer', size: 3, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'battleship', size: 4, hitCounter: 0, orientation: 'horizontal', coordinates: []},
+//     {name: 'carrier', size: 5, hitCounter: 0, orientation: 'horizontal', coordinates: []}
+// ]
+
 
 /*---------------------------- Variables (state) ----------------------------*/
 
-//stores coordinates targeted cell/div
+// stores coordinates targeted cell/div
 let coordinates = [] 
 
-//cell obj that player/cpu selected
+// cell obj that player/cpu selected
 let clickedCellObj = null
 
-//corresponding cell (same coordinates) on cpu/player grid
+// corresponding cell (same coordinates) on cpu/player grid
 let matchingCellObj = null
 
-//stores total hits by cpu on player ships
+// stores total hits by cpu on player ships
 let playerDamage = 0
 
-//stores total hits by player on cpu ships
+// stores total hits by player on cpu ships
 let cpuDamage = 0
 
-//did the player/cpu hit a ship during their turn
+// did the player/cpu hit a ship during their turn
 let wasAShipHitThisTurn = false
 
-//current turn
+// current turn
 let turn = 'player'
 
-//is there a winner
+// is there a winner
 let winner = false
 
+// arrays that store cell objects for each board
 const playerTopGridArray = []
 const playerBottomGridArray = []
 const cpuTopGridArray = []
 const cpuBottomGridArray = []
+
+// master array that stores the four above arrays
 const arrayOfArrays = []
 
 //stores ship as needed (not sure I need this yet)
@@ -65,11 +70,9 @@ const arrayOfArrays = []
 //let startGame = false
 
 
-
 /*------------------------ Cached Element References ------------------------*/
 
 const messageEl = document.querySelector('.message')
-
 const playerTopGridEl = document.querySelector('#player-top-grid')
 const playerBottomGridEl = document.querySelector('#player-bottom-grid')
 const cpuTopGridEl = document.querySelector('#cpu-top-grid')
@@ -82,13 +85,13 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 // const submarineEl = document.querySelector('#submarine')
 // const patrolBoatEl = document.querySelector('#patrol-boat')
 
+
 /*-------------------------------- Functions --------------------------------*/
 
 // starts game
 const init = () => {
     generateBoard()
     
-      
     //placeShips()
     //do something with matching cell
     //updateMatchingCell(matchingCellObj)
@@ -98,13 +101,11 @@ const init = () => {
     //check for winner
     //checkForWinner()
     //switch turn
-    //switchPlayerTurn()
-    
+    //switchPlayerTurn()   
      
 }
 
 //generates 4 boards with x and y axis 1 through 10          
-//create 4 boards- display all for testing- remove divs from cpu boards for final product
 const generateBoard = () => {                                    
     for (let i=1; i<=gridSize; i++) {                           
         for (let j=1; j<=gridSize; j++) {
@@ -119,27 +120,10 @@ const generateBoard = () => {
     arrayOfArrays.push(playerBottomGridArray)
     arrayOfArrays.push(cpuTopGridArray)
     arrayOfArrays.push(cpuBottomGridArray)
-    //checkGameState() //nope
 }
-
-//runs after turn, updates div colors
-const renderBoard = () => {
-
-}
-
-//shows cpu boards if in test state
-// const checkGameState = () => {
-//     if (!testing) {
-//         document.querySelectorAll('.cpu').classList.add('.hidden')
-//     } else {
-//         document.querySelectorAll('.cpu').classList.remove('.hidden')
-//     }
-// }
 
 // grid cell object constructor
  function Cell(row, col, element) {
-    // this.row = row
-    // this.col = col
     this.xy = [row,col]
     this.board = element.id
     this.selected = false
@@ -157,7 +141,7 @@ const renderBoard = () => {
             divEl.addEventListener('mouseover', makeBorderGreen);
             divEl.addEventListener('mouseout', makeBorderGray); 
             divEl.addEventListener('click', getCoordinates)  
-            divEl.addEventListener('mouseover', getCellSelectedState)
+            //divEl.addEventListener('mouseover', getCellState)
             break;
         case playerBottomGridEl:
             divEl.addEventListener('mouseover', makeBorderBlue);
@@ -168,13 +152,6 @@ const renderBoard = () => {
        }
     element.appendChild(divEl)   
 }
-
-// const placeShips = () => {
-//     for (let i=0; i<cpuBottomGridArray.length; i+=5) {
-//         cpuBottomGridArray[i].occupied = true
-//     }
-// }
-
 
 // changes global turn variable
 const switchPlayerTurn = (turn) => {
@@ -191,31 +168,32 @@ const getCoordinates = (event) => {
     let col = parseInt(event.target.dataset.col)
     coordinates = [row,col]
     console.log(coordinates)
+   
 
-    //THIS KIND OF WORKS
+    let testMatchingCell = getMatchingCellObj(coordinates)
+    testMatchingCell = updateMatchingCellObj(testMatchingCell)
 
-    // let testMatchingCell = getMatchingCellObj(coordinates)
-    // testMatchingCell = updateMatchingCell(testMatchingCell)
-
-    // let testClickedCell = getClickedCellObj(coordinates)
-    // testClickedCell = updateClickedCell(testClickedCell)
+    let testClickedCell = getClickedCellObj(coordinates)
+    testClickedCell = updateClickedCellObj(testClickedCell)
     //renderBoard()
 
-    // changeCellColor(testMatchingCell)
+    changeCellColor(testMatchingCell)
 
-    // changeCellColor(testClickedCell)
-    //console.log(testClickedCell)
+    changeCellColor(testClickedCell)
+    console.log(testClickedCell)
 
 
     //NEW STUFF
 
-   let testCell = getMatchingCellObj(coordinates)
-   console.log('before', testCell)
-   updateMatchingCellSwitch(testCell)
-   console.log('after', testCell)
+//    let testCell = getMatchingCellObj(coordinates)
+//    console.log('before', testCell)
+//    updateMatchingCellObj(testCell)
+//    console.log('after', testCell)
+
+//    renderBoard()
 }
 
-// stores corresponding opponent cell obj in global variable
+// returns corresponding opponent cell obj
 const getMatchingCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<cpuBottomGridArray.length; i++) {
@@ -236,7 +214,7 @@ const getMatchingCellObj = (coordinates) => {
     }
 }
 
-// stores cell obj that player clicked or cpu selected in global variable
+// returns cell obj that player clicked/cpu selected
 const getClickedCellObj = (coordinates) => {
     if (turn === 'player') {
         for (let i=0; i<playerTopGridArray.length; i++) {
@@ -257,8 +235,8 @@ const getClickedCellObj = (coordinates) => {
     }
 }
 
-//updates the target cell object (not div) on other player's board
-const updateMatchingCell = (cellObj) => {
+// updates the target cell object (not div) on other player's board
+const updateMatchingCellObj = (cellObj) => {
     if (cellObj.selected === true) {    
         messageEl.innerHTML = 'Pick another square'
         console.log('pick another square')
@@ -288,48 +266,8 @@ const updateMatchingCell = (cellObj) => {
     return cellObj
 }
 
-// going to try div colors in a different function
-const updateMatchingCellSwitch = (cellObj) => {
-    switch (cellObj.selected) {
-        case true:
-            messageEl.innerHTML = 'Pick another square!';
-            break;
-        case false: 
-            //cellObj.selected = true;
-            switch (cellObj.occupied) {
-                case true:
-                    switch (turn) {
-                        case 'player':
-                            messageEl.innerHTML = 'Computer was hit!';
-                            cellObj.selected = true;
-                            cpuDamage++
-                            break;
-                        case 'cpu':
-                            messageEl.innerHTML = 'You were hit!';
-                            cellObj.selected = true;
-                            playerDamage++
-                            break;
-                        default:
-                            break;    
-                    }
-                    break;
-                case false:
-                    messageEl.innerHTML = 'Miss!';
-                    cellObj.selected = true;
-                    break;
-                default:
-                    break;    
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-
-
-//updates the clicked cell obj (not div) on current player's board
-const updateClickedCell = (cellObj) => {
+// updates the clicked cell obj (not div) on current player's board
+const updateClickedCellObj = (cellObj) => {
     if (!cellObj.selected) {
         cellObj.selected = true
     }
@@ -348,7 +286,6 @@ const getDiv = (cellObj) => {
     let board = cellObj.board
     let div = document.querySelector(`[data-board='${board}'][data-row='${row}'][data-col='${col}']`)
     return div
-
 }
 
 
@@ -365,35 +302,81 @@ const changeCellColor = (cellObj) => {
 
 }
 
+const makeBorderGreen = (event) => {
+    event.target.style.borderColor = 'lime'
+}
+
+const makeBorderBlue = (event) => {
+    event.target.style.borderColor = 'aqua'
+}
+
+const makeBorderGray = (event) => {
+    event.target.style.borderColor = 'lightslategray'
+}
+
 
 //TEST FUNCTIONS
 
-const getCellSelectedState = (event) => {
+const getCellState = (event) => {
     let row = parseInt(event.target.dataset.row)
     let col = parseInt(event.target.dataset.col)
     coordinates = [row,col]
     let testCell = getMatchingCellObj(coordinates)
-    console.log(testCell.selected)
+    console.log(`selected is ${testCell.selected}`)
    
 }    
 
 //const updateBoard = (?) => {} // updates board after each turn 
 
+// switch test
+// const updateMatchingCellSwitch = (cellObj) => {
+//     switch (cellObj.selected) {
+//         case true:
+//             messageEl.innerHTML = 'Pick another square!';
+//             break;
+//         case false: 
+//             //cellObj.selected = true;
+//             switch (cellObj.occupied) {
+//                 case true:
+//                     switch (turn) {
+//                         case 'player':
+//                             messageEl.innerHTML = 'Computer was hit!';
+//                             cellObj.selected = true;
+//                             cpuDamage++
+//                             break;
+//                         case 'cpu':
+//                             messageEl.innerHTML = 'You were hit!';
+//                             cellObj.selected = true;
+//                             playerDamage++
+//                             break;
+//                         default:
+//                             break;    
+//                     }
+//                     break;
+//                 case false:
+//                     messageEl.innerHTML = 'Miss!';
+//                     cellObj.selected = true;
+//                     break;
+//                 default:
+//                     break;    
+//             }
+//             break;
+//         default:
+//             break;
+//     }
+// }
 
-
-const generateRandomNumber = () => {
-    let num = Math.random()    
-    let integer = Math.floor(num * 10) + 1
-    return integer
-}
+// const generateRandomNumber = () => {
+//     let num = Math.random()    
+//     let integer = Math.floor(num * 10) + 1
+//     return integer
+// }
 
 // hardcoding the ships
 // const randomizeBoard = (array) => {
 //     let num = generateRandomNumber()
 //     if (array[num].col > 6) {}
 // }
-
-
 
 // Setup phase
 
@@ -410,18 +393,11 @@ const generateRandomNumber = () => {
 
 // }
 
-const makeBorderGreen = (event) => {
-    event.target.style.borderColor = 'lime'
-}
-
-const makeBorderBlue = (event) => {
-    event.target.style.borderColor = 'aqua'
-}
-
-const makeBorderGray = (event) => {
-    event.target.style.borderColor = 'lightslategray'
-}
-
+// const placeShips = () => {
+//     for (let i=0; i<cpuBottomGridArray.length; i+=5) {
+//         cpuBottomGridArray[i].occupied = true
+//     }
+// }
 
 // turn off top grid event listeners when setup = true
 // player is asked to place carrier (first ship in array)
@@ -526,7 +502,6 @@ const celltoDiv = (cell) => {
 // click -> place -> assign location to ship, assign ship to cells
 // double click -> rotate -> orientation variable: horizontal or vertical (toggle)
 
-
 // position checker returns boolean
 //const checkPosition = ()
 
@@ -538,13 +513,6 @@ const celltoDiv = (cell) => {
 // const selectShip = () => {}
 
 // const updateMessage = (?) => {}
-
-
-
-
-
-
-
 
 // const checkIfSunk = (?) => {} // might not need this if I have hitShip
 
@@ -559,12 +527,7 @@ const celltoDiv = (cell) => {
 //         return
 //     }
 
-
 // }  
-
-
-
-
 
 // /*----------------------------- Event Listeners -----------------------------*/
 
@@ -574,11 +537,6 @@ const celltoDiv = (cell) => {
 // destroyerEl.addEventListener('click', selectShip)
 // submarineEl.addEventListener('click', selectShip)
 // patrolBoatEl.addEventListener('click', selectShip)
-
-
-
-
-
 
 /*--------------------------- This runs the game ----------------------------*/
 
