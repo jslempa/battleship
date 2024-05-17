@@ -1,6 +1,6 @@
 /*-------------------------------- Constants --------------------------------*/
 
-const gridSize = 10 //change this to a let if I want to try to let player change grid size
+const gridSize = 10
 
 const playerShips = [
     {name: 'patrolBoat', size: 2, hitCounter: 0, orientation: 'horizontal', coordinates: []},
@@ -19,9 +19,6 @@ const cpuShips = [
 ]
 
 /*---------------------------- Variables (state) ----------------------------*/
-
-//for testing
-let testing = false
 
 //stores coordinates targeted cell/div
 let coordinates = [] 
@@ -89,9 +86,8 @@ const cpuBottomGridEl = document.querySelector('#cpu-bottom-grid')
 
 // starts game
 const init = () => {
-    //checkGameState() //doesn't work here
     generateBoard()
-    //checkGameState() //doesn't work here
+    
       
     //placeShips()
     //do something with matching cell
@@ -118,7 +114,7 @@ const generateBoard = () => {
             cpuBottomGridArray.push(new Cell(i,j,cpuBottomGridEl))
         }
     }
-    cpuBottomGridArray[0].occupied = true
+    //cpuBottomGridArray[0].occupied = true
     arrayOfArrays.push(playerTopGridArray)
     arrayOfArrays.push(playerBottomGridArray)
     arrayOfArrays.push(cpuTopGridArray)
@@ -132,13 +128,13 @@ const renderBoard = () => {
 }
 
 //shows cpu boards if in test state
-const checkGameState = () => {
-    if (!testing) {
-        document.querySelectorAll('.cpu').classList.add('.hidden')
-    } else {
-        document.querySelectorAll('.cpu').classList.remove('.hidden')
-    }
-}
+// const checkGameState = () => {
+//     if (!testing) {
+//         document.querySelectorAll('.cpu').classList.add('.hidden')
+//     } else {
+//         document.querySelectorAll('.cpu').classList.remove('.hidden')
+//     }
+// }
 
 // grid cell object constructor
  function Cell(row, col, element) {
@@ -161,6 +157,7 @@ const checkGameState = () => {
             divEl.addEventListener('mouseover', makeBorderGreen);
             divEl.addEventListener('mouseout', makeBorderGray); 
             divEl.addEventListener('click', getCoordinates)  
+            divEl.addEventListener('mouseover', getCellSelectedState)
             break;
         case playerBottomGridEl:
             divEl.addEventListener('mouseover', makeBorderBlue);
@@ -172,14 +169,11 @@ const checkGameState = () => {
     element.appendChild(divEl)   
 }
 
-const placeShips = () => {
-    for (let i=0; i<cpuBottomGridArray.length; i+=5) {
-        cpuBottomGridArray[i].occupied = true
-    }
-}
-
-
-
+// const placeShips = () => {
+//     for (let i=0; i<cpuBottomGridArray.length; i+=5) {
+//         cpuBottomGridArray[i].occupied = true
+//     }
+// }
 
 
 // changes global turn variable
@@ -197,19 +191,28 @@ const getCoordinates = (event) => {
     let col = parseInt(event.target.dataset.col)
     coordinates = [row,col]
     console.log(coordinates)
-    let testMatchingCell = getMatchingCellObj(coordinates)
-    testMatchingCell = updateMatchingCell(testMatchingCell)
 
-    let testClickedCell = getClickedCellObj(coordinates)
-    testClickedCell = updateClickedCell(testClickedCell)
+    //THIS KIND OF WORKS
+
+    // let testMatchingCell = getMatchingCellObj(coordinates)
+    // testMatchingCell = updateMatchingCell(testMatchingCell)
+
+    // let testClickedCell = getClickedCellObj(coordinates)
+    // testClickedCell = updateClickedCell(testClickedCell)
     //renderBoard()
 
-    changeCellColor(testMatchingCell)
+    // changeCellColor(testMatchingCell)
 
-    changeCellColor(testClickedCell)
+    // changeCellColor(testClickedCell)
     //console.log(testClickedCell)
 
-   
+
+    //NEW STUFF
+
+   let testCell = getMatchingCellObj(coordinates)
+   console.log('before', testCell)
+   updateMatchingCellSwitch(testCell)
+   console.log('after', testCell)
 }
 
 // stores corresponding opponent cell obj in global variable
@@ -285,6 +288,46 @@ const updateMatchingCell = (cellObj) => {
     return cellObj
 }
 
+// going to try div colors in a different function
+const updateMatchingCellSwitch = (cellObj) => {
+    switch (cellObj.selected) {
+        case true:
+            messageEl.innerHTML = 'Pick another square!';
+            break;
+        case false: 
+            //cellObj.selected = true;
+            switch (cellObj.occupied) {
+                case true:
+                    switch (turn) {
+                        case 'player':
+                            messageEl.innerHTML = 'Computer was hit!';
+                            cellObj.selected = true;
+                            cpuDamage++
+                            break;
+                        case 'cpu':
+                            messageEl.innerHTML = 'You were hit!';
+                            cellObj.selected = true;
+                            playerDamage++
+                            break;
+                        default:
+                            break;    
+                    }
+                    break;
+                case false:
+                    messageEl.innerHTML = 'Miss!';
+                    cellObj.selected = true;
+                    break;
+                default:
+                    break;    
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+
+
 //updates the clicked cell obj (not div) on current player's board
 const updateClickedCell = (cellObj) => {
     if (!cellObj.selected) {
@@ -323,7 +366,20 @@ const changeCellColor = (cellObj) => {
 }
 
 
+//TEST FUNCTIONS
+
+const getCellSelectedState = (event) => {
+    let row = parseInt(event.target.dataset.row)
+    let col = parseInt(event.target.dataset.col)
+    coordinates = [row,col]
+    let testCell = getMatchingCellObj(coordinates)
+    console.log(testCell.selected)
+   
+}    
+
 //const updateBoard = (?) => {} // updates board after each turn 
+
+
 
 const generateRandomNumber = () => {
     let num = Math.random()    
@@ -367,9 +423,6 @@ const makeBorderGray = (event) => {
 }
 
 
-
-
-
 // turn off top grid event listeners when setup = true
 // player is asked to place carrier (first ship in array)
 // bottom grid event listeners are active when setup = true
@@ -380,32 +433,7 @@ const makeBorderGray = (event) => {
     //click - place ship  
     //doubleclick - rotate ship  
 
-
-
-
-
-
-
-
 // Functions for dealing with grid coordinates
-
-// Doesn't work
-// const divToCell = (div) => {
-//     let board = div.dataset.board
-//     let row = parseInt(div.dataset.row)
-//     let col = parseInt(div.dataset.col)
-//     let matchingCell = {}
-//     arrayOfArrays.forEach((array) => {
-//         for (let i=0; i<array.length; i++) {
-//             if (array[i].board === board && array[i].row === row && array[i].col === col) {
-//                 matchingCell = array[i]
-//             }
-//         }
-//     })
-//     console.log(typeof matchingCell)
-//     //making sure it returns an object
-// }
-
 
 // THIS WORKS, KEEPING SO I DON'T BREAK IT
 // THIS LINKS THE CLICKED DIV WITH ITS CORRESPONDING CELL OBJECT
@@ -435,37 +463,6 @@ const celltoDiv = (cell) => {
 
 // other functions
 
-const testHandleClick = (event) => {
-    console.log(`${event.target.dataset.row}, ${event.target.dataset.col}`)
-}
-
-
-
-//trying to get mouseover cell and adjacent cell to turn green
-const changeTwoCellsToGreen = (event) => {
-    //changes mouseover cell to green
-    event.target.style.borderColor = 'lime'
-    //coords is an array [row,col]
-    let coords = getDivXY(event.target)
-    let nextCellCoords = [coords[0], coords[1]+1]
-    //need to go from coords to div and change that div
-    let nextCellEl = getDiv(nextCellCoords)
-    nextCellEl.style.borderColor = 'lime'
-
-    console.log(nextCellCoords)
-    
-}
-
-const changeBorderBack = (event) => {
-    event.target.style.borderColor = divToCell().color
-}
-
-//shows ship outline -> if valid outline is green if invalid outline is red
-// const showOutline = (event) => {
-
-// }
-
-
 // updates cell obj properties
 // const handleCell = (cell) => {
 //     if (cell.selected === true) {                               // square is already picked 
@@ -486,9 +483,6 @@ const changeBorderBack = (event) => {
 //     }
 // }
 
-// prob don't need this (change color in handleCell and handleTopGridClick)
-// updates div color
-// const handleDiv = (cell) => {}
 
 //marks ship as hit
 // const hitShip = (ship) => {
@@ -547,31 +541,8 @@ const changeBorderBack = (event) => {
 
 
 
-// // what needs to change on the top board?
-// // what need to change on the bottom board?
-// // player is clicking on the html div NOT the js array cell
-// const handleClick = (event) => {                                // player picks a square
-//     if (event.target.selected === true) {                       // square is already picked
-//         updateMessage(?) 'pick another square'                  // tell player to pick again
-//     } else {                                                    // square is not already picked
-//         event.target.selected = true                            // mark square as selected
-//         if (event.target.occupied === false) {                  // square does not have a ship
-//             updateMessage(?) 'miss'                             // tell player it was a miss
-//             event.target.hit = false  
-//             //change board to display miss                           // mark square as miss                           
-//         } else {                                                // square has a ship
-//             event.target.hit = true                             // mark square as hit
-//             //change board to display miss
-//             run hitShip
-           
-            
-            
-//         } 
-//         turn = ('player') ? turn = 'computer' : turn = 'player' // changes turn
-                                           
-//     }                                        
-    
-// }
+
+
 
 
 
@@ -611,12 +582,8 @@ const changeBorderBack = (event) => {
 
 /*--------------------------- This runs the game ----------------------------*/
 
-//checkGameState() //doesn't work here
-init() // starts game
-//checkGameState() //doesn't work here
+init()
 
-
-//console.log(matchingCell)
 
 // hardcoding a carrier on the cpu board
 // cpuBottomGridArray[0].occupied = true //row 1 col 1
@@ -630,125 +597,4 @@ init() // starts game
 // cpuBottomGridArray[3].ship = 'carrier'
 // cpuBottomGridArray[4].ship = 'carrier'
 
-// console.log(cpuBottomGridArray[4])
-// this.row = row
-// this.col = col
-// this.xy = [row,col]
-// this.board = element.id
-// this.selected = false
-// this.occupied = false
-// this.hit = false
-// this.ship = null
-// this.color = null
-
-
-//randomizeBoard(playerBottomGridArray)
-//console.log(celltoDiv(playerTopGridArray[0]))
-
-
-//console.log(cpuBottomGridArray[99])
-//setup()
-
-// setup() // player places ships
-// run() // starts the part where player and cpu select squares
-
-
-
-
-
-/*
-
-
-const handleClick = (event) => {
-    findCell
-    - match event target row and col to corresponding gridCell
-    updateCell
-    - change cell properties with if else
-    - change event target (div) color
-   
-    
-}
-
-
-player clicks on div 
-each div needs an event listener
-    - on click -> find matching cell
-        - check cell properties
-        - update cell properties
-        - change div color based on cell properties
-
-
-function to match div id to corresponding array value (row, col)
-
-                                                    
-- if already selected
-    - return
-- if not selected
-    - change to selected
-    - 
-ship properties
-
-? name
-? location: [] 
-hitCounter: starts at 0
-health
-
-cell properties
-selected: boolean
-occupied: boolean
-hit: boolean
-ship: string ex: 'destroyer'
-
-
-
-/*
-
-Start 
-
-Click to play
-
-Select ship
-
-Place ship
-
-Repeat until no ships left
-
-Player 1's turn
-
-Select square
-
-onClick check: hit or miss
-
-If hit
-
-    Check if sunk
-
-        If sunk
-
-            Check if still have ships
-
-                If false
-
-                    Computer wins
-
-
-
-Repeat for computer's turn
-
-
-
-PLAYER PICKING A TOP SQUARE PROCESS 
-
-add different event listeners to top vs bottom player grids?
-
-DONE Mouseover event (white border)
-
-DONE A square (div el) is clicked (handleClick)
-DONE Get Cell object with same row and col as clicked div (function returns the Cell object)
-
-   
-    Determine what to do with this Cell (something function)
-
-
-*/
 

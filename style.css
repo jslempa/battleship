@@ -42,3 +42,14 @@ h1, h4 {
     display: none;
 }
 
+@media only screen and (max-width: 900px) {
+    #all-grids-container {
+        display: flex;
+        flex-direction: column;
+        /* display: grid; */
+        /* grid-template-columns: 50% 50%; */
+        /* grid-template-rows: 50% 50%; */
+        min-height: 600px; 
+        gap: 5rem;
+    }
+ }
